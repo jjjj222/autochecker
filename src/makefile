@@ -1,0 +1,2 @@
+run:
+	./AutoCorrect.py

@@ -41,7 +41,7 @@ class AnnParser(SGMLParser):
         self.correction = self.data
 
     def handle_data(self, data):
-        self.data = data
+        self.data = data.strip()
 
     def dump(self):
         for m in self.mistakes:

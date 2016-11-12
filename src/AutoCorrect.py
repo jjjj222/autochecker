@@ -10,7 +10,8 @@ from document import *
 class ConllData:
     def __init__(self, conll_file, ann_file):
         self.documents = self._parse_conll(conll_file)
-        self.mistakes = self._parse_ann(ann_file)
+        mistakes = self._parse_ann(ann_file)
+        self._add_mistakes_to_docs(self.documents, mistakes)
 
     def _parse_conll(self, filename):
         results = []
@@ -31,7 +32,7 @@ class ConllData:
             SID = int(SID)
             TOKENID = int(TOKENID)
 
-            if document == None or document.get_id() != NID:
+            if document == None or document.id != NID:
                 if document != None:
                     results.append(document)
                 document = Document(NID)
@@ -52,6 +53,12 @@ class ConllData:
         parser.feed(raw)
         results =  parser.get_results()
         return results
+
+    def _add_mistakes_to_docs(self, documents, mistakes):
+        id2doc = dict([ (d.id, d) for d in documents ]) 
+
+        for m in mistakes:
+            id2doc[ m.nid ].add_mistake(m)
 
     def dump(self):
         for d in self.documents:
@@ -76,7 +83,7 @@ def main():
         return
 
     data = ConllData(conll_file, ann_file)
-    #data.dump()
+    data.dump()
     #print type(data)
 
 if __name__ == "__main__":

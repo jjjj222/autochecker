@@ -9,11 +9,12 @@ from document import *
 
 class ConllData:
     def __init__(self, conll_file, ann_file):
-        self.documents = []
-        self._parse_conll(conll_file)
-        self._parse_ann(ann_file)
+        self.documents = self._parse_conll(conll_file)
+        self.mistakes = self._parse_ann(ann_file)
 
     def _parse_conll(self, filename):
+        results = []
+
         data = parse_space_separated_file(filename)
 
         document = None
@@ -25,35 +26,32 @@ class ConllData:
                 continue
 
             NID, PID, SID, TOKENID, TOKEN, POS, DPHEAD, DPREL, SYNT = line
+            NID = int(NID)
+            PID = int(PID)
+            SID = int(SID)
+            TOKENID = int(TOKENID)
 
             if document == None or document.get_id() != NID:
                 if document != None:
-                    self.documents.append(document)
+                    results.append(document)
                 document = Document(NID)
 
             word = Word(TOKENID, TOKEN, POS)
             document.add_word(PID, SID, word)
 
-        
-        self.documents.append(document)
+        results.append(document)
+        return results
 
     def _parse_ann(self, filename):
-        print "QQ"
+        results = []
+
         f = open(filename, 'r')
         parser = AnnParser()
-        filestr = f.read()
-        filestr = filestr.decode('utf-8')
-        
-        #Fix Reference tag
-        p = re.compile(r'(<REFERENCE>\n<P>\n.*\n)<P>')
-        filestr = p.sub(r'\1</P>', filestr)
+        raw = f.read()
 
-        #parser.feed(filestr)
-        parser.feed(filestr)
-        #f.close()
-        #parser.close()
-
-        #return parser.docs
+        parser.feed(raw)
+        results =  parser.get_results()
+        return results
 
     def dump(self):
         for d in self.documents:

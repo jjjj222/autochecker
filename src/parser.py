@@ -1,156 +1,50 @@
 from sgmllib import SGMLParser
-#from nucle_doc import nucle_doc
-
+from document import Mistake
 
 class AnnParser(SGMLParser):
     def __init__(self):
         SGMLParser.__init__(self)
-        self.docs = []
+        #self.current_mistake = None
+        self.mistakes = []
+        self.attrs = None
+        self.err_type = None
+        self.correction = None
+        self.data = None
 
-    #def reset(self):
-    #    self.docs = []
-    #    self.data = []
-    #    SGMLParser.reset(self)
+    def get_results(self):
+        return self.mistakes
 
-    #def unknow_starttag(self, tag, attrs):
-    #    pass
+    def start_mistake(self, attrs):
+        self.attrs = dict(attrs)
 
-    #def unknow_endtag(self):
-    #    pass
+    def end_mistake(self):
+        nid = int(self.attrs['nid'])
+        pid = int(self.attrs['pid'])
+        sid = int(self.attrs['sid'])
+        start_token = int(self.attrs['start_token'])
+        end_token = int(self.attrs['end_token'])
+        err_type = self.err_type
+        correction = self.correction
 
-    #def start_doc(self, attrs):
-    #    self.docs.append(nucle_doc())
-    #    self.docs[-1].docattrs = attrs
+        self.mistakes.append( Mistake(nid, pid, sid, start_token, end_token, err_type, correction) )
 
-    #def end_doc(self):
-    #    pass
+    def start_type(self, attrs):
+        pass
 
-    #def start_matric(self, attrs):
-    #    pass
+    def end_type(self):
+        self.err_type = self.data
 
-    #def end_matric(self):
-    #    self.docs[-1].matric = ''.join(self.data)
-    #    self.data = []
-    #    pass
+    def start_correction(self, attrs):
+        pass
 
-    #def start_email(self, attrs):
-    #    pass
+    def end_correction(self):
+        self.correction = self.data
 
-    #def end_email(self):
-    #    self.docs[-1].email = ''.join(self.data)
-    #    self.data = []
-    #    pass
+    def handle_data(self, data):
+        self.data = data
 
-    #def start_nationality(self, attrs):
-    #    pass
-
-    #def end_nationality(self):
-    #    self.docs[-1].nationality = ''.join(self.data)
-    #    self.data = []
-    #    pass
-
-    #def start_first_language(self, attrs):
-    #    pass
-
-    #def end_first_language(self):
-    #    self.docs[-1].firstLanguage = ''.join(self.data)
-    #    self.data = []
-    #    pass
-
-    #def start_school_language(self, attrs):
-    #    pass
-
-    #def end_school_language(self):
-    #    self.docs[-1].schoolLanguage = ''.join(self.data)
-    #    self.data = []
-    #    pass
-
-    #def start_english_tests(self, attrs):
-    #    pass
-
-    #def end_english_tests(self):
-    #    self.docs[-1].englishTests = ''.join(self.data)
-    #    self.data = []
-    #    pass
-
-
-    #def start_text(self, attrs):
-    #    pass
-    
-    #def end_text(self):
-    #    pass
-
-    #def start_title(self, attrs):
-    #    pass
-
-    #def end_title(self):
-    #    self.docs[-1].paragraphs.append(''.join(self.data))
-    #    self.data = []
-    #    pass
-
-
-    #def start_p(self, attrs):
-    #    pass
-
-    #def end_p(self):
-    #    self.docs[-1].paragraphs.append(''.join(self.data))
-    #    self.data = []
-    #    pass
-
-
-    #def start_annotation(self, attrs):
-    #    self.docs[-1].annotation.append(attrs)
-
-    #def end_annotation(self):
-    #    pass
-
-    #def start_mistake(self, attrs):
-    #    d = {}
-    #    for t in attrs:
-    #        d[t[0]] = int(t[1])
-    #    self.docs[-1].mistakes.append(d)
-    #    pass 
-
-    #def end_mistake(self):
-    #    pass 
-
-    #def start_type(self, attrs):
-    #    pass
-
-    #def end_type(self):
-    #    self.docs[-1].mistakes[-1]['type'] = ''.join(self.data)
-    #    self.data = []
-
-    #def start_correction(self, attrs):
-    #    pass
-
-    #def end_correction(self):
-    #    self.docs[-1].mistakes[-1]['correction'] = ''.join(self.data)
-    #    self.data = []
-
-    #def start_comment(self, attrs):
-    #    pass
-
-    #def end_comment(self):
-    #    self.docs[-1].mistakes[-1]['comment'] = ''.join( self.data)
-    #    self.data = []
-
-
-    #def handle_charref(self, ref):
-    #    self.data.append('&' + ref)
-
-    #def handle_entityref(self, ref):
-    #    self.data.append('&' + ref)
-
-    #def handle_data(self, text):
-    #    if  text.strip() == '':
-    #        self.data.append('')
-    #        return
-    #    else:
-    #        if text.startswith('\n'):
-    #            text = text[1:]
-    #        if text.endswith('\n'):
-    #            text = text[:-1]
-    #        self.data.append(text)
+    def dump(self):
+        for m in self.mistakes:
+            m.dump()
 
 

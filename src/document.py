@@ -1,5 +1,19 @@
 import sys
 
+class Mistake:
+    def __init__(self, nid, pid, sid, start_token, end_token, err_type, correction):
+        self.nid = nid
+        self.pid = pid
+        self.sid = sid
+        self.start_token = start_token
+        self.end_token = end_token
+        self.err_type = err_type
+        self.correction = correction
+
+    def dump(self):
+        print self.nid, self.pid, self.sid, "[%d:%d]" % (self.start_token, self.end_token),\
+            "<%s>" % self.err_type, self.correction
+
 class Word:
     def __init__(self, token_id, token, pos):
         self.id = token_id

@@ -4,8 +4,10 @@ from parser import AnnParser
 
 class ConllData:
     def __init__(self, conll_file, ann_file):
-        self.documents = parse_conll_file(conll_file)
+        self.documents = []
+        self.id2doc = {}
 
+        self.documents = parse_conll_file(conll_file)
         mistakes = parse_ann_file(ann_file)
         self._add_mistakes_to_docs(self.documents, mistakes)
         self._process_synt()
@@ -17,30 +19,26 @@ class ConllData:
             result += d.get_ArtOrDet_candidates()
 
         return result
-    #def coorVV
-    #def concordance(self, 
-    #    for d in documents:
-    #        d.show_the()
-    #def show_error(self, err_type):
-    #    for d in documents:
-    #        d.show_error(err_type)
 
-    #def getArtOrDetErrors(
+    def get_mistake(self, w):
+        s = self.get_sentence(w.nid, w.pid, w.sid)
+        return s.get_mistake(w)
 
-
+    def get_sentence(self, nid, pid, sid):
+        return self.id2doc[nid][pid][sid]
 
     def _add_mistakes_to_docs(self, documents, mistakes):
-        id2doc = dict([ (d.id, d) for d in documents ])
+        self.id2doc = dict([ (d.id, d) for d in documents ])
 
         for m in mistakes:
-            id2doc[ m.nid ].add_mistake(m)
+            self.id2doc[ m.nid ].add_mistake(m)
 
     def _process_synt(self):
-        self.documents[0][1][0]._process_synt()
-        #for d in self.documents:
-        #    for p in d.paragraphs:
-        #        for s in p.sentences:
-        #            s._process_synt()
+        #self.documents[0][1][0]._process_synt()
+        for d in self.documents:
+            for p in d.paragraphs:
+                for s in p.sentences:
+                    s._process_synt()
 
 
     def dump(self):
@@ -71,7 +69,7 @@ def parse_conll_file(filename):
                 results.append(document)
             document = Document(NID)
 
-        word = Word(TOKENID, TOKEN, POS, SYNT)
+        word = Word(NID, PID, SID, TOKENID, TOKEN, POS, SYNT)
         document.add_word(PID, SID, word)
 
     results.append(document)

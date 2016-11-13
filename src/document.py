@@ -11,11 +11,14 @@ class Mistake:
         self.correction = correction
 
     def dump(self):
-        print "M:", self.nid, self.pid, self.sid, "[%d:%d]" % (self.start_token, self.end_token),\
+        print self.nid, self.pid, self.sid, "[%d:%d]" % (self.start_token, self.end_token),\
             "<%s>" % self.err_type, self.correction
 
 class Word:
-    def __init__(self, token_id, token, pos, synt):
+    def __init__(self, nid, pid, sid, token_id, token, pos, synt):
+        self.nid = nid
+        self.pid = pid
+        self.sid = sid
         self.id = token_id
         self.token = token
         self.pos = pos
@@ -24,11 +27,10 @@ class Word:
         self.node = None
 
     def __str__(self):
-        #return self.token
         return "%s/%s/%s" % (self.token, self.pos, self.node)
 
     def dump(self):
-        pass
+        print self.nid, self.pid, self.sid, self.id, self.token
 
 class Sentence:
     def __init__(self, sid):
@@ -39,7 +41,28 @@ class Sentence:
     def get_ArtOrDet_candidates(self):
         result = []
 
+        in_np = False
+        for w in self.words:
+            if w.node == "NP":
+                if not in_np:
+                    in_np = True
+                    result.append(w)
+            else:
+                in_np = False
+
         return result
+
+    def get_mistake(self, w):
+        for m in self.mistakes:
+            if m.err_type == "ArtOrDet":
+                if m.start_token == m.end_token and m.start_token == w.id:
+                    #print "missing", w, "->", m.correction
+                    return m
+                elif m.start_token == w.id and m.end_token == w.id + 1:
+                    #print "wrong det", w, "->", m.correction
+                    return m
+
+        return None
 
     def add_word(self, word):
         assert word.id == len(self.words)
@@ -67,6 +90,9 @@ class Sentence:
 
     def __getitem__(self, i):
         return self.words[i]
+
+    def get_plain_text(self):
+        return ' '.join([w.token for w in self.words])
 
     def dump(self):
         for w in self.words:

@@ -15,16 +15,17 @@ class Mistake:
             "<%s>" % self.err_type, self.correction
 
 class Word:
-    def __init__(self, token_id, token, pos):
+    def __init__(self, token_id, token, pos, synt):
         self.id = token_id
         self.token = token
         self.pos = pos
+        self.synt = synt
 
-    def get_id(self):
-        return self.id
+        self.node = None
 
     def __str__(self):
-        return self.token
+        #return self.token
+        return "%s/%s/%s" % (self.token, self.pos, self.node)
 
     def dump(self):
         pass
@@ -35,13 +36,37 @@ class Sentence:
         self.words = []
         self.mistakes = []
 
+    def get_ArtOrDet_candidates(self):
+        result = []
+
+        return result
+
     def add_word(self, word):
-        assert word.get_id() == len(self.words)
+        assert word.id == len(self.words)
         self.words.append(word)
 
     def add_mistake(self, m):
         assert self.id == m.sid
         self.mistakes.append(m)
+
+    def _process_synt(self):
+        tree_text = ""
+        node = ""
+        i = 0
+
+        for w in self.words:
+            tree_text += w.synt
+            while tree_text[i] != '*':
+                if tree_text[i] == '(' or tree_text[i] == ')':
+                    node = ""
+                else:
+                    node += tree_text[i]
+                i += 1
+            i += 1
+            w.node = node
+
+    def __getitem__(self, i):
+        return self.words[i]
 
     def dump(self):
         for w in self.words:
@@ -55,6 +80,14 @@ class Paragraph:
         self.id = pid
         self.sentences = []
 
+    def get_ArtOrDet_candidates(self):
+        result = []
+
+        for s in self.sentences:
+            result += s.get_ArtOrDet_candidates()
+
+        return result
+
     def add_word(self, sid, word):
         if (len(self.sentences) == 0 or sid != self.sentences[-1].id):
             self.sentences.append( Sentence(sid) )
@@ -65,6 +98,9 @@ class Paragraph:
     def add_mistake(self, m):
         assert self.id == m.pid
         self.sentences[m.sid].add_mistake(m)
+
+    def __getitem__(self, i):
+        return self.sentences[i]
 
     def dump(self):
         for s in self.sentences:
@@ -77,6 +113,14 @@ class Document:
         self.id = nid
         self.paragraphs = []
 
+    def get_ArtOrDet_candidates(self):
+        result = []
+
+        for p in self.paragraphs:
+            result += p.get_ArtOrDet_candidates()
+
+        return result
+
     def add_word(self, pid, sid, word):
         if (len(self.paragraphs) == 0 or pid != self.paragraphs[-1].id):
             self.paragraphs.append( Paragraph(pid) )
@@ -87,6 +131,9 @@ class Document:
     def add_mistake(self, m):
         assert self.id == m.nid
         self.paragraphs[m.pid].add_mistake(m)
+
+    def __getitem__(self, i):
+        return self.paragraphs[i]
 
     def dump(self):
         for p in self.paragraphs:

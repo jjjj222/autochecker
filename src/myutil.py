@@ -17,3 +17,4 @@ def parse_space_separated_file(filename):
             words = line.split()
             result.append(words)
     return result
+

@@ -1,68 +1,25 @@
 #! /usr/bin/python
 
 import sys
-import re
-from parser import AnnParser
-#from myutil import check_file_to_read
+#import re
+from conlldata import ConllData
 from myutil import *
-from document import *
 
-class ConllData:
-    def __init__(self, conll_file, ann_file):
-        self.documents = self._parse_conll(conll_file)
-        mistakes = self._parse_ann(ann_file)
-        self._add_mistakes_to_docs(self.documents, mistakes)
 
-    def _parse_conll(self, filename):
-        results = []
+def parse_data(conll_file, ann_file):
+    conlldata = ConllData(conll_file, ann_file)
+    c = conlldata.get_ArtOrDet_candidates()
 
-        data = parse_space_separated_file(filename)
+    print c
 
-        document = None
-        for line in data:
-            if len(line) == 0:
-                continue
-            elif len(line) != 9:
-                print "Format Error"
-                continue
+    #conlldata.dump()
+        #for s in self.sentences:
+        #    result.append( s.get_ArtOrDet_candidates() )
+    #conlldata.concordance("the")
+    #c = []
+    #for d in conlldata:
+    #    c.append( d.get_ArtOrDet_candidates() )
 
-            NID, PID, SID, TOKENID, TOKEN, POS, DPHEAD, DPREL, SYNT = line
-            NID = int(NID)
-            PID = int(PID)
-            SID = int(SID)
-            TOKENID = int(TOKENID)
-
-            if document == None or document.id != NID:
-                if document != None:
-                    results.append(document)
-                document = Document(NID)
-
-            word = Word(TOKENID, TOKEN, POS)
-            document.add_word(PID, SID, word)
-
-        results.append(document)
-        return results
-
-    def _parse_ann(self, filename):
-        results = []
-
-        f = open(filename, 'r')
-        parser = AnnParser()
-        raw = f.read()
-
-        parser.feed(raw)
-        results =  parser.get_results()
-        return results
-
-    def _add_mistakes_to_docs(self, documents, mistakes):
-        id2doc = dict([ (d.id, d) for d in documents ]) 
-
-        for m in mistakes:
-            id2doc[ m.nid ].add_mistake(m)
-
-    def dump(self):
-        for d in self.documents:
-            d.dump()
 
 
 def main():
@@ -82,8 +39,7 @@ def main():
     if not check_file_to_read(conll_file):
         return
 
-    data = ConllData(conll_file, ann_file)
-    data.dump()
+    parse_data(conll_file, ann_file)
     #print type(data)
 
 if __name__ == "__main__":

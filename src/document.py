@@ -39,6 +39,7 @@ class Word:
         self.pos = pos
         self.synt = synt
 
+        self.sentence = None
         self.node = None
 
     def __str__(self):
@@ -85,6 +86,7 @@ class Sentence:
     def add_word(self, word):
         assert word.id == len(self.words)
         self.words.append(word)
+        word.sentence = self
 
     def add_mistake(self, m):
         assert self.id == m.sid

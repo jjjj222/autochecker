@@ -1,7 +1,8 @@
 #! /usr/bin/python
 
 import sys
-#import nltk
+import nltk
+import itertools
 #import nltk.classify
 from conlldata import ConllData
 from myutil import *
@@ -28,15 +29,19 @@ def artOrDet_features(sentence, word):
 
     return result
 
+def artOrDet_current(sentence, word):
+    if word.token.lower() in target_det :
+        return word.token.lower()
+    else:
+        return "<X>"
+    
+    
+
 def artOrDet_class(sentence, word, mistake):
     i = word.id
 
     if mistake == None:
-        #if word.pos == "DT" :
-        if word.token.lower() in target_det :
-            return word.token.lower()
-        else:
-            return "<X>"
+        return artOrDet_current(sentence, word)
     else:
         if mistake.correction == "":
             return "<X>"
@@ -77,14 +82,27 @@ def parse_data(conll_file, ann_file):
 
         feature_set.append((f, c))
 
+    current_det = [artOrDet_current(w.sentence, w) for w in candidates]
+
+    classifier = nltk.NaiveBayesClassifier.train(feature_set)
+    results = [ classifier.classify(f[0]) for f in feature_set ]
+
+    for c, r, w in itertools.izip(current_det, results, candidates):
+        if c != r:
+            print w.nid, w.pid, w.sid, w.id, w, c, r
+
+    print
+    #print results
+    #print len(feature_set)
+    #print "NaiveBayes:", nltk.classify.accuracy(classifier, feature_set)
     for m in conlldata.mistakes("ArtOrDet"):
         m.dump()
-        #s = conlldata.get_sentence(m.nid, m.pid, m.sid)
-        print m.sentence
-        print m.show_in_sentence()
-        #break
-        #s = m.sentence
-        #print s
+    #    #s = conlldata.get_sentence(m.nid, m.pid, m.sid)
+    #    print m.sentence
+    #    print m.show_in_sentence()
+    #    #break
+    #    #s = m.sentence
+    #    #print s
 
     
     #run_classifier(feature_set)

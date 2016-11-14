@@ -10,6 +10,21 @@ class Mistake:
         self.err_type = err_type
         self.correction = correction
 
+        self.sentence = None
+
+    def show_in_sentence(self):
+        id2word = dict([(w.id, w.token) for w in self.sentence])
+
+        if self.start_token == self.end_token:
+            id2word[self.start_token + 0.5] = "[%s]" % self.correction
+        else:
+            id2word[self.start_token] = "(%s" % id2word[self.start_token]
+            id2word[self.end_token-1] = "%s)" % id2word[self.end_token-1]
+            if self.correction != "":
+                id2word[self.end_token-1] += "[%s]" % self.correction
+
+        return ' '.join( [w for k, w in sorted(id2word.items())] )
+
     def dump(self):
         print self.nid, self.pid, self.sid, "[%d:%d]" % (self.start_token, self.end_token),\
             "<%s>" % self.err_type, self.correction
@@ -74,6 +89,7 @@ class Sentence:
     def add_mistake(self, m):
         assert self.id == m.sid
         self._mistakes.append(m)
+        m.sentence = self
 
     def mistakes(self, err_type = None):
         for m in self._mistakes:

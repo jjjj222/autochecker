@@ -79,8 +79,12 @@ def parse_data(conll_file, ann_file):
 
     for m in conlldata.mistakes("ArtOrDet"):
         m.dump()
-        s = conlldata.get_sentence(m.nid, m.pid, m.sid)
-        print s
+        #s = conlldata.get_sentence(m.nid, m.pid, m.sid)
+        print m.sentence
+        print m.show_in_sentence()
+        #break
+        #s = m.sentence
+        #print s
 
     
     #run_classifier(feature_set)

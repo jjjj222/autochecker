@@ -27,6 +27,11 @@ class ConllData:
     def get_sentence(self, nid, pid, sid):
         return self.id2doc[nid][pid][sid]
 
+    def mistakes(self, err_type = None):
+        for d in self.documents:
+            for m in d.mistakes(err_type):
+                yield m
+
     def _add_mistakes_to_docs(self, documents, mistakes):
         self.id2doc = dict([ (d.id, d) for d in documents ])
 
@@ -39,6 +44,15 @@ class ConllData:
             for p in d.paragraphs:
                 for s in p.sentences:
                     s._process_synt()
+
+    #def for_all_sentences(self, fn):
+    #    for d in self.documents:
+    #        for p in d.paragraphs:
+    #            for s in p.sentences:
+    #                fn(s)
+
+    def __getitem__(self, i):
+        return self.documents[i]
 
 
     def dump(self):

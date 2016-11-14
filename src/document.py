@@ -39,7 +39,7 @@ class Sentence:
     def __init__(self, sid):
         self.id = sid
         self.words = []
-        self.mistakes = []
+        self._mistakes = []
 
     def get_ArtOrDet_candidates(self):
         result = []
@@ -56,7 +56,7 @@ class Sentence:
         return result
 
     def get_mistake(self, w):
-        for m in self.mistakes:
+        for m in self._mistakes:
             if m.err_type == "ArtOrDet":
                 if m.start_token == m.end_token and m.start_token == w.id:
                     #print "missing", w, "->", m.correction
@@ -73,7 +73,12 @@ class Sentence:
 
     def add_mistake(self, m):
         assert self.id == m.sid
-        self.mistakes.append(m)
+        self._mistakes.append(m)
+
+    def mistakes(self, err_type = None):
+        for m in self._mistakes:
+            if err_type == None or m.err_type == err_type:
+                yield m
 
     def _process_synt(self):
         tree_text = ""
@@ -107,7 +112,7 @@ class Sentence:
         for w in self.words:
             sys.stdout.write("%s " % w)
         print ""
-        for m in self.mistakes:
+        for m in self._mistakes:
             m.dump()
 
 class Paragraph:
@@ -133,6 +138,11 @@ class Paragraph:
     def add_mistake(self, m):
         assert self.id == m.pid
         self.sentences[m.sid].add_mistake(m)
+
+    def mistakes(self, err_type = None):
+        for s in self.sentences:
+            for m in s.mistakes(err_type):
+                yield m
 
     def __getitem__(self, i):
         return self.sentences[i]
@@ -166,6 +176,11 @@ class Document:
     def add_mistake(self, m):
         assert self.id == m.nid
         self.paragraphs[m.pid].add_mistake(m)
+
+    def mistakes(self, err_type = None):
+        for p in self.paragraphs:
+            for m in p.mistakes(err_type):
+                yield m
 
     def __getitem__(self, i):
         return self.paragraphs[i]

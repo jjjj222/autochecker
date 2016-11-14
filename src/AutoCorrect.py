@@ -1,7 +1,7 @@
 #! /usr/bin/python
 
 import sys
-import nltk
+#import nltk
 #import nltk.classify
 from conlldata import ConllData
 from myutil import *
@@ -43,32 +43,31 @@ def artOrDet_class(sentence, word, mistake):
         return mistake.correction.lower()
 
 
-def run_classifier(feature_set):
-    train_set = feature_set[:len(feature_set)/2]
-    test_set = feature_set[len(feature_set)/2:]
-
-    classifier = MajorityClassifier()
-    classifier.train(train_set)
-    print "Majority:", nltk.classify.accuracy(classifier, test_set)
-
-    classifier = nltk.NaiveBayesClassifier.train(train_set)
-    print "NaiveBayes:", nltk.classify.accuracy(classifier, test_set)
-
-def run_classifier_overfit(feature_set):
-    classifier = MajorityClassifier()
-    classifier.train(feature_set)
-    print classifier.labels()
-    print "Majority:", nltk.classify.accuracy(classifier, feature_set)
-
-    classifier = nltk.NaiveBayesClassifier.train(feature_set)
-    print "NaiveBayes:", nltk.classify.accuracy(classifier, feature_set)
+#def run_classifier(feature_set):
+#    train_set = feature_set[:len(feature_set)/2]
+#    test_set = feature_set[len(feature_set)/2:]
+#
+#    classifier = MajorityClassifier()
+#    classifier.train(train_set)
+#    print "Majority:", nltk.classify.accuracy(classifier, test_set)
+#
+#    classifier = nltk.NaiveBayesClassifier.train(train_set)
+#    print "NaiveBayes:", nltk.classify.accuracy(classifier, test_set)
+#
+#def run_classifier_overfit(feature_set):
+#    classifier = MajorityClassifier()
+#    classifier.train(feature_set)
+#    print classifier.labels()
+#    print "Majority:", nltk.classify.accuracy(classifier, feature_set)
+#
+#    classifier = nltk.NaiveBayesClassifier.train(feature_set)
+#    print "NaiveBayes:", nltk.classify.accuracy(classifier, feature_set)
 
 
 def parse_data(conll_file, ann_file):
     conlldata = ConllData(conll_file, ann_file)
     candidates = conlldata.get_ArtOrDet_candidates()
 
-    #print c
     feature_set = []
     for w in candidates:
         s = conlldata.get_sentence(w.nid, w.pid, w.sid)
@@ -78,7 +77,13 @@ def parse_data(conll_file, ann_file):
 
         feature_set.append((f, c))
 
-    run_classifier(feature_set)
+    for m in conlldata.mistakes("ArtOrDet"):
+        m.dump()
+        s = conlldata.get_sentence(m.nid, m.pid, m.sid)
+        print s
+
+    
+    #run_classifier(feature_set)
     #run_classifier_overfit(feature_set)
         #if c != 'a' and c != 'an' and c != 'the' and c != '<X>':
         #    #print s.plain_text()

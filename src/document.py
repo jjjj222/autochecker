@@ -29,6 +29,9 @@ class Word:
     def __str__(self):
         return "%s/%s/%s" % (self.token, self.pos, self.node)
 
+    #def dump_str(self):
+    #    return "%s"
+
     def dump(self):
         print self.nid, self.pid, self.sid, self.id, self.token
 
@@ -91,8 +94,14 @@ class Sentence:
     def __getitem__(self, i):
         return self.words[i]
 
-    def get_plain_text(self):
+    def __str__(self):
         return ' '.join([w.token for w in self.words])
+
+    def tagged_text(self):
+        return ' '.join([w.__str__() for w in self.words])
+    #def plain_text(self):
+    #    return ' '.join([w.token for w in self.words])
+
 
     def dump(self):
         for w in self.words:

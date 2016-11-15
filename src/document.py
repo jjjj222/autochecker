@@ -1,4 +1,5 @@
 import sys
+#import pdb
 
 class Mistake:
     def __init__(self, nid, pid, sid, start_token, end_token, err_type, correction):
@@ -13,6 +14,7 @@ class Mistake:
         self.sentence = None
 
     def show_in_sentence(self):
+        #pdb.set_trace()
         id2word = dict([(w.id, w.token) for w in self.sentence])
 
         if self.start_token == self.end_token:

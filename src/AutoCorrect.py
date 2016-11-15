@@ -68,9 +68,20 @@ def artOrDet_class(sentence, word, mistake):
 #    classifier = nltk.NaiveBayesClassifier.train(feature_set)
 #    print "NaiveBayes:", nltk.classify.accuracy(classifier, feature_set)
 
+def write_out_correct(conlldata, out_file):
+    f = open(out_file, 'w')
+    for s in conlldata.sentences():
+        f.write(s.correct_text("ArtOrDet"))
+        f.write('\n')
+        print s.correct_text("ArtOrDet")
+    f.close()
+
 
 def parse_data(conll_file, ann_file, out_file):
     conlldata = ConllData(conll_file, ann_file)
+    write_out_correct(conlldata, out_file)
+
+
     candidates = conlldata.get_ArtOrDet_candidates()
 
     feature_set = []
@@ -82,20 +93,17 @@ def parse_data(conll_file, ann_file, out_file):
 
         feature_set.append((f, c))
 
+    #for m in conlldata.mistakes("ArtOrDet"):
+    #    if m.nid != 829 or m.pid != 4 or m.sid != 1:
+    #        continue
 
+    #    print m.show_in_sentence()
+    #    m.dump()
     #s = conlldata[0][3][0]
     #print s
     #s.dump()
     #print s.correct_text()
 
-    f = open(out_file, 'w')
-    for s in conlldata.sentences():
-        #f.write(s.__str__())
-        f.write(s.correct_text("ArtOrDet"))
-        f.write('\n')
-        print s.correct_text("ArtOrDet")
-        #break
-    f.close()
 
 
     #current_det = [artOrDet_current(w.sentence, w) for w in candidates]

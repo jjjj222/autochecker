@@ -2,9 +2,13 @@ EXEC = AutoCorrect.py
 M2SCORER = ../data/conll14st/m2scorer/scripts/m2scorer.py
 SIMPLE_CONLL = ../data/simple/simple.conll
 SIMPLE_ANN = ../data/simple/simple.conll.ann
-SIMPLE_M2 = ../data/simple/simple.m2
 SIMPLE_OUT = ../result/simple.conll.out
-SIMPLE_M2_DET = ../data/simple/simple.m2.ArtOrDet
+SIMPLE_M2 = ../data/simple/simple.m2.ArtOrDet
+
+SIMPLE2_CONLL = ../data/simple2/simple2.conll
+SIMPLE2_ANN = ../data/simple2/simple2.conll.ann
+SIMPLE2_OUT = ../result/simple2.conll.out
+SIMPLE2_M2 = ../data/simple2/simple2.m2.ArtOrDet
 
 FINAL_CONLL = ../data/artOrDet/official-2014.0.conll
 FINAL_ANN = ../data/artOrDet/official-2014.0.conll.ann
@@ -21,13 +25,19 @@ simple:
 	python $(EXEC) $(SIMPLE_CONLL) $(SIMPLE_ANN) $(SIMPLE_OUT)
 
 simple_m2:
-	$(M2SCORER) $(SIMPLE_OUT) $(SIMPLE_M2_DET)
+	$(M2SCORER) -v $(SIMPLE_OUT) $(SIMPLE_M2)
 
-simple_m2_v:
-	$(M2SCORER) -v $(SIMPLE_OUT) $(SIMPLE_M2_DET)
+simple2:
+	python $(EXEC) $(SIMPLE2_CONLL) $(SIMPLE2_ANN) $(SIMPLE2_OUT)
+
+simple2_m2:
+	$(M2SCORER) -v $(SIMPLE2_OUT) $(SIMPLE2_M2)
 
 final:
 	python $(EXEC) $(FINAL_CONLL) $(FINAL_ANN) $(FINAL_OUT)
 
 final_m2:
-	m2scorer -v $(FINAL_OUT) $(FINAL_M2)
+	$(M2SCORER) -v $(FINAL_OUT) $(FINAL_M2)
+
+qq:
+	echo $@

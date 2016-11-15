@@ -123,12 +123,15 @@ class Sentence:
     def tagged_text(self):
         return ' '.join([w.__str__() for w in self.words])
 
-    def correct_text(self):
+    def correct_text(self, err_type = None):
         id2word = dict([(w.id, w.token) for w in self.words])
         #print id2word
 
         #print id2word
         for m in self._mistakes:
+            if err_type != None and m.err_type != err_type:
+                continue
+
             if m.start_token == m.end_token:
                 id2word[m.start_token - 0.5] = "%s" % m.correction
             else:

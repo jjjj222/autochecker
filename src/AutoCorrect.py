@@ -83,12 +83,19 @@ def parse_data(conll_file, ann_file, out_file):
         feature_set.append((f, c))
 
 
-    f = open(out_file, 'w')
-    for s in conlldata.sentences():
-        f.write(s.__str__())
-        f.write('\n')
-        print s
-    f.close()
+    s = conlldata[0][3][0]
+    print s
+    s.dump()
+    print s.correct_text()
+
+    #f = open(out_file, 'w')
+    #for s in conlldata.sentences():
+    #    #f.write(s.__str__())
+    #    f.write(s.correct_text())
+    #    f.write('\n')
+    #    print s.correct_text()
+    #    #break
+    #f.close()
 
 
     #current_det = [artOrDet_current(w.sentence, w) for w in candidates]

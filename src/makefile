@@ -4,8 +4,11 @@ SIMPLE_ANN = ../data/simple/simple.conll.ann
 SIMPLE_M2 = ../data/simple/simple.m2
 SIMPLE_OUT = ../result/simple.conll.out
 
-run:
+all:
 	python AutoCorrect.py $(SIMPLE_CONLL) $(SIMPLE_ANN) $(SIMPLE_OUT)
+
+run:
+	tmux send-keys -t NLP-p-2:make make Enter
 
 m2_simple:
 	$(M2SCORER) $(SIMPLE_OUT) $(SIMPLE_M2)

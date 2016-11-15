@@ -16,7 +16,7 @@ class Mistake:
         id2word = dict([(w.id, w.token) for w in self.sentence])
 
         if self.start_token == self.end_token:
-            id2word[self.start_token + 0.5] = "[%s]" % self.correction
+            id2word[self.start_token - 0.5] = "[%s]" % self.correction
         else:
             id2word[self.start_token] = "(%s" % id2word[self.start_token]
             id2word[self.end_token-1] = "%s)" % id2word[self.end_token-1]
@@ -122,8 +122,32 @@ class Sentence:
 
     def tagged_text(self):
         return ' '.join([w.__str__() for w in self.words])
-    #def plain_text(self):
-    #    return ' '.join([w.token for w in self.words])
+
+    def correct_text(self):
+        id2word = dict([(w.id, w.token) for w in self.words])
+        #print id2word
+
+        #print id2word
+        for m in self._mistakes:
+            if m.start_token == m.end_token:
+                id2word[m.start_token - 0.5] = "%s" % m.correction
+            else:
+                for i in range(m.start_token, m.end_token):
+                    del id2word[i]
+                id2word[m.start_token] = m.correction
+
+        #if self.start_token == self.end_token:
+        #    id2word[self.start_token + 0.5] = "[%s]" % self.correction
+        #else:
+        #    id2word[self.start_token] = "(%s" % id2word[self.start_token]
+        #    id2word[self.end_token-1] = "%s)" % id2word[self.end_token-1]
+        #    if self.correction != "":
+        #        id2word[self.end_token-1] += "[%s]" % self.correction
+        #print id2word
+
+        return ' '.join( [w for k, w in sorted(id2word.items())] )
+        #pass
+ 
 
 
     def dump(self):

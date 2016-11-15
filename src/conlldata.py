@@ -32,6 +32,11 @@ class ConllData:
             for m in d.mistakes(err_type):
                 yield m
 
+    def sentences(self):
+        for d in self.documents:
+            for s in d.sentences():
+                yield s
+
     def _add_mistakes_to_docs(self, documents, mistakes):
         self.id2doc = dict([ (d.id, d) for d in documents ])
 

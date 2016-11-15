@@ -1,7 +1,7 @@
 #! /usr/bin/python
 
 import sys
-import nltk
+#import nltk
 import itertools
 #import nltk.classify
 from conlldata import ConllData
@@ -69,7 +69,7 @@ def artOrDet_class(sentence, word, mistake):
 #    print "NaiveBayes:", nltk.classify.accuracy(classifier, feature_set)
 
 
-def parse_data(conll_file, ann_file):
+def parse_data(conll_file, ann_file, out_file):
     conlldata = ConllData(conll_file, ann_file)
     candidates = conlldata.get_ArtOrDet_candidates()
 
@@ -82,27 +82,36 @@ def parse_data(conll_file, ann_file):
 
         feature_set.append((f, c))
 
-    current_det = [artOrDet_current(w.sentence, w) for w in candidates]
 
-    classifier = nltk.NaiveBayesClassifier.train(feature_set)
-    results = [ classifier.classify(f[0]) for f in feature_set ]
+    f = open(out_file, 'w')
+    for s in conlldata.sentences():
+        f.write(s.__str__())
+        f.write('\n')
+        print s
+    f.close()
 
-    for c, r, w in itertools.izip(current_det, results, candidates):
-        if c != r:
-            print w.nid, w.pid, w.sid, w.id, w, c, r
 
-    print
-    #print results
-    #print len(feature_set)
-    #print "NaiveBayes:", nltk.classify.accuracy(classifier, feature_set)
-    for m in conlldata.mistakes("ArtOrDet"):
-        m.dump()
-    #    #s = conlldata.get_sentence(m.nid, m.pid, m.sid)
-    #    print m.sentence
-    #    print m.show_in_sentence()
-    #    #break
-    #    #s = m.sentence
-    #    #print s
+    #current_det = [artOrDet_current(w.sentence, w) for w in candidates]
+
+    #classifier = nltk.NaiveBayesClassifier.train(feature_set)
+    #results = [ classifier.classify(f[0]) for f in feature_set ]
+
+    #for c, r, w in itertools.izip(current_det, results, candidates):
+    #    if c != r:
+    #        print w.nid, w.pid, w.sid, w.id, w, c, r
+
+    #print
+    ##print results
+    ##print len(feature_set)
+    ##print "NaiveBayes:", nltk.classify.accuracy(classifier, feature_set)
+    #for m in conlldata.mistakes("ArtOrDet"):
+    #    m.dump()
+    ##    #s = conlldata.get_sentence(m.nid, m.pid, m.sid)
+    ##    print m.sentence
+    ##    print m.show_in_sentence()
+    ##    #break
+    ##    #s = m.sentence
+    ##    #print s
 
     
     #run_classifier(feature_set)
@@ -152,23 +161,20 @@ def parse_data(conll_file, ann_file):
 
 
 def main():
-    data_path = "../data/simple"
-    #data_path = "../data/simpleq"
-    conll_file_name = "simple.conll"
-    ann_file_name = "simple.conll.ann"
-    conll_file = "%s/%s" % (data_path, conll_file_name)
-    ann_file = "%s/%s" % (data_path, ann_file_name)
-    #data_path = "../data/nucle3.2/preprocessed_data"
-    #conll_file = "nucle3.2-preprocessed.conll"
-    #ann_file = "nucle3.2-preprocessed.conll.ann"
-    #print conll_file
-    #print sys.argv
-    #print "QQ"
+    #data_path = "../data/simple"
+    #conll_file_name = "simple.conll"
+    #ann_file_name = "simple.conll.ann"
+    #conll_file = "%s/%s" % (data_path, conll_file_name)
+    #ann_file = "%s/%s" % (data_path, ann_file_name)
+
+    conll_file = sys.argv[1]
+    ann_file = sys.argv[2]
+    out_file = sys.argv[3]
 
     if not check_file_to_read(conll_file):
         return
 
-    parse_data(conll_file, ann_file)
+    parse_data(conll_file, ann_file, out_file)
     #print type(data)
 
 if __name__ == "__main__":

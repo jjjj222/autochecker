@@ -200,6 +200,11 @@ class Document:
             for m in p.mistakes(err_type):
                 yield m
 
+    def sentences(self):
+        for p in self.paragraphs:
+            for s in p.sentences:
+                yield s
+
     def __getitem__(self, i):
         return self.paragraphs[i]
 

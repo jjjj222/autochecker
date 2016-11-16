@@ -1,5 +1,5 @@
 import sys
-#import pdb
+import pdb
 
 class Mistake:
     def __init__(self, nid, pid, sid, start_token, end_token, err_type, correction):
@@ -12,6 +12,29 @@ class Mistake:
         self.correction = correction
 
         self.sentence = None
+
+    def __eq__(self, other):
+        if other is None:
+            return False
+
+        return self._all_data() == other._all_data()
+
+    def __ne__(self, other):
+        return not __eq__()
+
+    def __hash__(self):
+        return hash(self._all_data())
+
+    def _all_data(self):
+        return (self.nid, self.pid, self.sid, self.start_token, self.end_token, self.err_type,\
+            self.correction.lower())
+
+    def orig_text(self):
+        t = []
+        for i in range(self.start_token, self.end_token):
+            t.append(self.sentence[i].token)
+
+        return ' '.join(t)
 
     def show_in_sentence(self):
         #pdb.set_trace()
@@ -29,7 +52,7 @@ class Mistake:
 
     def dump(self):
         print self.nid, self.pid, self.sid, "[%d:%d]" % (self.start_token, self.end_token),\
-            "<%s>" % self.err_type, self.correction
+            "<%s>" % self.err_type, "(%s)->[%s]" % (self.orig_text(), self.correction)
 
 class Word:
     def __init__(self, nid, pid, sid, token_id, token, pos, synt):
@@ -44,11 +67,13 @@ class Word:
         self.sentence = None
         self.node = None
 
+    def prev_word(self):
+        if self.id == 0:
+            return None
+        return self.sentence[self.id-1]
+
     def __str__(self):
         return "%s/%s/%s" % (self.token, self.pos, self.node)
-
-    #def dump_str(self):
-    #    return "%s"
 
     def dump(self):
         print self.nid, self.pid, self.sid, self.id, self.token
@@ -73,14 +98,12 @@ class Sentence:
 
         return result
 
-    def get_mistake(self, w):
+    def get_mistake(self, w, err_type=None):
         for m in self._mistakes:
-            if m.err_type == "ArtOrDet":
+            if m.err_type == err_type:
                 if m.start_token == m.end_token and m.start_token == w.id:
-                    #print "missing", w, "->", m.correction
                     return m
-                elif m.start_token == w.id and m.end_token == w.id + 1:
-                    #print "wrong det", w, "->", m.correction
+                elif w.id in range(m.start_token, m.end_token):
                     return m
 
         return None
@@ -115,6 +138,9 @@ class Sentence:
                 i += 1
             i += 1
             w.node = node
+
+    def __len__(self):
+        return len(self.words)
 
     def __getitem__(self, i):
         return self.words[i]

@@ -2,6 +2,91 @@ from myutil import *
 from document import *
 from parser import AnnParser
 
+EMPTY_STR = ''
+TARGET_DET = [EMPTY_STR, 'a', 'an', 'the']
+
+class Candidate:
+    def __init__(self, word):
+        self.word = word
+        #self.klass = None
+
+    def get_determiner(self):
+        if self.word.pos == "DT":
+            return self.word.token.lower()
+
+        prev_word = self.word.prev_word()
+        if prev_word != None and prev_word.pos == "DT":
+            return prev_word.token.lower()
+
+        return EMPTY_STR
+
+    def get_correct_determiner(self):
+        m = self.word.sentence.get_mistake(self.word, "ArtOrDet")
+
+        if m == None:
+            return self.get_determiner()
+        else:
+            if m.correction == "":
+                return EMPTY_STR
+            return m.correction.lower()
+
+    def generate_mistake(self, result):
+        c = self.get_determiner()
+        if result == c:
+            return None
+
+        if result == EMPTY_STR:
+            m = Mistake(self.word.nid, self.word.pid, self.word.sid, self.word.id,\
+                self.word.id+1, "ArtOrDet", "")
+        else:
+            if c == EMPTY_STR:
+                m = Mistake(self.word.nid, self.word.pid, self.word.sid, self.word.id,\
+                    self.word.id, "ArtOrDet", result)
+            else:
+                m = Mistake(self.word.nid, self.word.pid, self.word.sid, self.word.id,\
+                    self.word.id+1, "ArtOrDet", result)
+
+        m.sentence = self.word.sentence
+        return m
+
+    def is_target(self):
+        return self.get_determiner() in TARGET_DET and self.get_correct_determiner() in TARGET_DET
+
+    def dump(self):
+        print self.word, self.get_determiner(), self.get_correct_determiner()
+
+
+def get_candidates(documents):
+    words = []
+    for d in documents:
+        words += d.get_ArtOrDet_candidates()
+
+    candidates = [Candidate(w) for w in words if Candidate(w).is_target()]
+    return candidates
+
+def get_target_mistakes(documents):
+    result = []
+    for d in documents:
+        for m in d.mistakes("ArtOrDet"):
+            if not m.correction in TARGET_DET:
+                continue
+
+            if not m.orig_text() in TARGET_DET:
+                continue
+
+            result.append(m)
+
+    return result
+
+#def get_mistakes(documents):
+#    result = []
+#    for d in documents:
+#        for m in d.mistakes("ArtOrDet"):
+#            result.append(m)
+#
+#    return result
+
+
 class ConllData:
     def __init__(self, conll_file, ann_file):
         self.documents = []

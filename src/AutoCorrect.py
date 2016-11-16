@@ -1,12 +1,16 @@
 #! /usr/bin/python
 
 import sys
-#import nltk
+import nltk
 import itertools
+from sets import Set
+
 #import nltk.classify
-from conlldata import ConllData
+from document import *
+from conlldata import *
 from myutil import *
 from classifier import *
+from features import *
 
 #def is_ArtOrDet(word):
 #    if word == "the" or word == 'a' or word == 'an':
@@ -15,27 +19,12 @@ from classifier import *
 #    return False
 target_det = ['a', 'an', 'the']
 
-def artOrDet_features(sentence, word):
-    result = {}
-
-    i = word.id
-
-    if word.pos == "DT":
-        result['word'] = sentence[i+1].token.lower()
-        result['tag'] = sentence[i+1].pos
-    else:
-        result['word'] = sentence[i].token.lower()
-        result['tag'] = sentence[i].pos
-
-    return result
 
 def artOrDet_current(sentence, word):
     if word.token.lower() in target_det :
         return word.token.lower()
     else:
         return "<X>"
-    
-    
 
 def artOrDet_class(sentence, word, mistake):
     i = word.id
@@ -48,26 +37,6 @@ def artOrDet_class(sentence, word, mistake):
         return mistake.correction.lower()
 
 
-#def run_classifier(feature_set):
-#    train_set = feature_set[:len(feature_set)/2]
-#    test_set = feature_set[len(feature_set)/2:]
-#
-#    classifier = MajorityClassifier()
-#    classifier.train(train_set)
-#    print "Majority:", nltk.classify.accuracy(classifier, test_set)
-#
-#    classifier = nltk.NaiveBayesClassifier.train(train_set)
-#    print "NaiveBayes:", nltk.classify.accuracy(classifier, test_set)
-#
-#def run_classifier_overfit(feature_set):
-#    classifier = MajorityClassifier()
-#    classifier.train(feature_set)
-#    print classifier.labels()
-#    print "Majority:", nltk.classify.accuracy(classifier, feature_set)
-#
-#    classifier = nltk.NaiveBayesClassifier.train(feature_set)
-#    print "NaiveBayes:", nltk.classify.accuracy(classifier, feature_set)
-
 def write_out_correct(conlldata, out_file):
     f = open(out_file, 'w')
     for s in conlldata.sentences():
@@ -76,24 +45,188 @@ def write_out_correct(conlldata, out_file):
         print s.correct_text("ArtOrDet")
     f.close()
 
+def train_classifier(documents):
+    #words = []
+    #for d in documents:
+    #    words += d.get_ArtOrDet_candidates()
+
+    #candidates = [Candidate(w) for w in words if Candidate(w).is_target()]
+    candidates = get_candidates(documents)
+
+    feature_set = [(artOrDet_features(c.word), c.get_correct_determiner()) for c in candidates]
+
+    #majority
+    classifier = MajorityClassifier()
+    classifier.train(feature_set)
+
+    #naive
+    #classifier = nltk.NaiveBayesClassifier.train(feature_set)
+
+    #decision tree
+    classifier = nltk.DecisionTreeClassifier.train(feature_set)
+
+    #maxent
+    #classifier = nltk.MaxentClassifier.train(feature_set)
+
+
+    test_classifier(classifier, feature_set)
+
+    return classifier
+
+def test_classifier(classifier, feature_set):
+    results = [ classifier.classify(f[0]) for f in feature_set ]
+    correct_results = [ f[1] for f in feature_set ]
+    cm = nltk.ConfusionMatrix(correct_results, results)
+    print cm
+    print "overfit =", nltk.classify.accuracy(classifier, feature_set)
+    print
+
+
+def test_data(classifier, documents):
+    candidates = get_candidates(documents)
+
+    results = []
+    for c in candidates:
+        feature = artOrDet_features(c.word)
+        result = classifier.classify(feature)
+        results.append(result)
+
+    #feature_set = [(artOrDet_features(c.word), c.get_correct_determiner()) for c in candidates]
+    #return
+
+    #current_det = [c.get_determiner() for c in candidates]
+
+
+    new_mistakes = []
+    for r, c in itertools.izip(results, candidates):
+        m = c.generate_mistake(r)
+        if m:
+            new_mistakes.append(m)
+    
+
+
+    print "# of correction =", len(new_mistakes)
+    for m in new_mistakes:
+        m.dump()
+    print
+
+    golden_mistakes = get_target_mistakes(documents)
+    print "# of golden correction =", len(golden_mistakes)
+    for m in golden_mistakes:
+        m.dump()
+    print
+
+    new_mistakes_set = Set(new_mistakes)
+    golden_mistakes_set = Set(golden_mistakes)
+
+    tp = []
+    fp = []
+    fn = []
+
+    for m in golden_mistakes:
+        if m in new_mistakes_set:
+            tp.append(m)
+        else:
+            fn.append(m)
+
+    for m in new_mistakes:
+        if not m in golden_mistakes_set:
+            fp.append(m)
+
+    print "# of fp =", len(fp)
+    for m in fp:
+        m.dump()
+    print
+
+    print "# of fn =", len(fn)
+    for m in fn:
+        m.dump()
+    print
+
+    print "tp =", len(tp)
+    print "fp =", len(fp)
+    print "fn =", len(fn)
+
+    print "precision = %s" % (float(len(tp)) / (len(tp) + len(fp)))
+    print "recall = %s" % (float(len(tp)) / (len(tp) + len(fn)))
 
 def parse_data(conll_file, ann_file, out_file):
     conlldata = ConllData(conll_file, ann_file)
-    write_out_correct(conlldata, out_file)
+    #write_out_correct(conlldata, out_file)
 
+    classifier = train_classifier(conlldata.documents)
+    test_data(classifier, conlldata.documents)
+    return
 
-    candidates = conlldata.get_ArtOrDet_candidates()
+    #words = conlldata.get_ArtOrDet_candidates()
+    #candidates = [Candidate(w) for w in words if Candidate(w).is_target()]
 
-    feature_set = []
-    for w in candidates:
-        s = conlldata.get_sentence(w.nid, w.pid, w.sid)
-        m = conlldata.get_mistake(w)
-        f = artOrDet_features(s, w)
-        c = artOrDet_class(s, w, m)
+    #for c in candidates:
+    #    c.dump()
 
-        feature_set.append((f, c))
+    #feature_set = [(artOrDet_features(c.word), c.get_correct_determiner()) for c in candidates]
+    #print feature_set[0]
+    #return
 
-    #for m in conlldata.mistakes("ArtOrDet"):
+    #return
+    #return
+    #feature_set = []
+    #for w in words:
+    #    s = conlldata.get_sentence(w.nid, w.pid, w.sid)
+    #    m = conlldata.get_mistake(w)
+    #    f = artOrDet_features(s, w)
+    #    c = artOrDet_class(s, w, m)
+
+    #    feature_set.append((f, c))
+
+    #classifier = train_classifier(feature_set)
+
+    #for c in candidates
+
+    #print classifier
+    #current_det = [artOrDet_current(w.sentence, w) for w in words]
+    current_det = [c.get_correct_determiner() for c in candidates]
+    results = [ classifier.classify(f[0]) for f in feature_set ]
+    correct_results = [ f[1] for f in feature_set ]
+    cm = nltk.ConfusionMatrix(correct_results, results)
+    print cm
+    print "overfit =", nltk.classify.accuracy(classifier, feature_set)
+
+    new_mistakes = []
+    for c, r, w in itertools.izip(current_det, results, words):
+        if c == r:
+            continue
+
+        #print w.nid, w.pid, w.sid, w.id, w, c, r
+        if r == "<X>":
+            m = Mistake(w.nid, w.pid, w.sid, w.id, w.id+1, "ArtOrDet", "")
+        else:
+            if c == "<X>":
+                m = Mistake(w.nid, w.pid, w.sid, w.id, w.id, "ArtOrDet", r)
+            else:
+                m = Mistake(w.nid, w.pid, w.sid, w.id, w.id+1, "ArtOrDet", r)
+        new_mistakes.append(m)
+
+    #print len(new_mistakes)
+    new_mistakes_set = Set(new_mistakes)
+
+    #print len(new_mistakes_set)
+
+    tp, fp, fn = 0, 0, 0
+    for m in conlldata.mistakes("ArtOrDet"):
+        if m in new_mistakes_set:
+            tp += 1
+        else:
+            fn += 1
+
+    fp = len(new_mistakes_set) - tp
+
+    print "tp =", tp
+    print "fp =", fp
+    print "fn =", fn
+
+    print "precision = %s" % (float(tp) / (tp + fp))
+    print "recall = %s" % (float(tp) / (tp + fn))
     #    if m.nid != 829 or m.pid != 4 or m.sid != 1:
     #        continue
 

@@ -52,7 +52,6 @@ def train_classifier(documents):
 
     #candidates = [Candidate(w) for w in words if Candidate(w).is_target()]
     candidates = get_candidates(documents)
-
     feature_set = [(artOrDet_features(c.word), c.get_correct_determiner()) for c in candidates]
 
     #majority
@@ -63,10 +62,10 @@ def train_classifier(documents):
     #classifier = nltk.NaiveBayesClassifier.train(feature_set)
 
     #decision tree
-    classifier = nltk.DecisionTreeClassifier.train(feature_set)
+    #classifier = nltk.DecisionTreeClassifier.train(feature_set)
 
     #maxent
-    #classifier = nltk.MaxentClassifier.train(feature_set)
+    classifier = nltk.MaxentClassifier.train(feature_set)
 
 
     test_classifier(classifier, feature_set)
@@ -85,11 +84,20 @@ def test_classifier(classifier, feature_set):
 def test_data(classifier, documents):
     candidates = get_candidates(documents)
 
-    results = []
-    for c in candidates:
-        feature = artOrDet_features(c.word)
-        result = classifier.classify(feature)
-        results.append(result)
+    feature_set = [(artOrDet_features(c.word), c.get_correct_determiner()) for c in candidates]
+    results = [ classifier.classify(f[0]) for f in feature_set ]
+    correct_results = [ f[1] for f in feature_set ]
+    cm = nltk.ConfusionMatrix(correct_results, results)
+    print cm
+    print "dev =", nltk.classify.accuracy(classifier, feature_set)
+    print
+
+    return
+    #results = []
+    #for c in candidates:
+    #    feature = artOrDet_features(c.word)
+    #    result = classifier.classify(feature)
+    #    results.append(result)
 
     #feature_set = [(artOrDet_features(c.word), c.get_correct_determiner()) for c in candidates]
     #return
@@ -154,8 +162,9 @@ def parse_data(conll_file, ann_file, out_file):
     conlldata = ConllData(conll_file, ann_file)
     #write_out_correct(conlldata, out_file)
 
-    classifier = train_classifier(conlldata.documents)
-    test_data(classifier, conlldata.documents)
+    half = len(conlldata.documents) / 2
+    classifier = train_classifier(conlldata.documents[:half])
+    test_data(classifier, conlldata.documents[half:])
     return
 
     #words = conlldata.get_ArtOrDet_candidates()

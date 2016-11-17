@@ -33,6 +33,9 @@ simple2:
 simple2_m2:
 	$(M2SCORER) -v $(SIMPLE2_OUT) $(SIMPLE2_M2)
 
+medium:
+	python $(EXEC) ../data/$@/$@.conll ../data/$@/$@.conll.ann ../result/$@.out
+
 final:
 	python $(EXEC) $(FINAL_CONLL) $(FINAL_ANN) $(FINAL_OUT)
 

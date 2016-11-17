@@ -15,32 +15,35 @@ FINAL_ANN = ../data/artOrDet/official-2014.0.conll.ann
 FINAL_OUT = ../result/official-2014.0.conll.out
 FINAL_M2 = ../data/artOrDet/official-2014.0.m2.ArtOrDet
 
-all:
-	python $(EXEC) $(SIMPLE_CONLL) $(SIMPLE_ANN) $(SIMPLE_OUT)
+ALL_CONLL = ../data/nucle3.2/preprocessed_data/nucle3.2-preprocessed.conll
+ALL_ANN = ../data/nucle3.2/preprocessed_data/nucle3.2-preprocessed.conll.ann
+ALL_OUT = ../result/all.out
 
-run:
-	tmux send-keys -t NLP-p-2:make make Enter
+RUN_CASE = python $(EXEC) ../data/$@/$@.conll ../data/$@/$@.conll.ann ../result/$@.out
 
 simple:
-	python $(EXEC) $(SIMPLE_CONLL) $(SIMPLE_ANN) $(SIMPLE_OUT)
+	$(RUN_CASE)
+
+simple2:
+	$(RUN_CASE)
+
+
+medium:
+	$(RUN_CASE)
 
 simple_m2:
 	$(M2SCORER) -v $(SIMPLE_OUT) $(SIMPLE_M2)
 
-simple2:
-	python $(EXEC) $(SIMPLE2_CONLL) $(SIMPLE2_ANN) $(SIMPLE2_OUT)
-
 simple2_m2:
 	$(M2SCORER) -v $(SIMPLE2_OUT) $(SIMPLE2_M2)
 
-medium:
-	python $(EXEC) ../data/$@/$@.conll ../data/$@/$@.conll.ann ../result/$@.out
+	@#python $(EXEC) ../data/$@/$@.conll ../data/$@/$@.conll.ann ../result/$@.out
 
 final:
 	python $(EXEC) $(FINAL_CONLL) $(FINAL_ANN) $(FINAL_OUT)
 
+all:
+	python $(EXEC) $(ALL_CONLL) $(ALL_ANN) $(ALL_OUT)
+
 final_m2:
 	$(M2SCORER) -v $(FINAL_OUT) $(FINAL_M2)
-
-qq:
-	echo $@

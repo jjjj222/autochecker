@@ -52,7 +52,7 @@ def train_classifier(documents):
 
     #candidates = [Candidate(w) for w in words if Candidate(w).is_target()]
     candidates = get_candidates(documents)
-    feature_set = [(artOrDet_features(c.word), c.get_correct_determiner()) for c in candidates]
+    feature_set = [(artOrDet_features(c.word), c.get_determiner_class()) for c in candidates]
 
     #majority
     classifier = MajorityClassifier()
@@ -84,7 +84,11 @@ def test_classifier(classifier, feature_set):
 def test_data(classifier, documents):
     candidates = get_candidates(documents)
 
-    feature_set = [(artOrDet_features(c.word), c.get_correct_determiner()) for c in candidates]
+    #for c in candidates:
+    #    c.dump()
+    #return
+
+    feature_set = [(artOrDet_features(c.word), c.get_determiner_class()) for c in candidates]
     results = [ classifier.classify(f[0]) for f in feature_set ]
     correct_results = [ f[1] for f in feature_set ]
     cm = nltk.ConfusionMatrix(correct_results, results)
@@ -92,7 +96,7 @@ def test_data(classifier, documents):
     print "dev =", nltk.classify.accuracy(classifier, feature_set)
     print
 
-    return
+    #return
     #results = []
     #for c in candidates:
     #    feature = artOrDet_features(c.word)
@@ -110,7 +114,10 @@ def test_data(classifier, documents):
         m = c.generate_mistake(r)
         if m:
             new_mistakes.append(m)
-    
+
+
+    #return
+    golden_mistakes = get_target_mistakes(documents)
 
 
     print "# of correction =", len(new_mistakes)
@@ -118,7 +125,6 @@ def test_data(classifier, documents):
         m.dump()
     print
 
-    golden_mistakes = get_target_mistakes(documents)
     print "# of golden correction =", len(golden_mistakes)
     for m in golden_mistakes:
         m.dump()
@@ -158,9 +164,14 @@ def test_data(classifier, documents):
     print "precision = %s" % (float(len(tp)) / (len(tp) + len(fp)))
     print "recall = %s" % (float(len(tp)) / (len(tp) + len(fn)))
 
+    print "f1 = %s" % (2 * float(len(tp)) / (2 * len(tp) + len(fn) + len(fp)))
+
+
+
 def parse_data(conll_file, ann_file, out_file):
     conlldata = ConllData(conll_file, ann_file)
     #write_out_correct(conlldata, out_file)
+    conlldata.filter_mistakes()
 
     half = len(conlldata.documents) / 2
     classifier = train_classifier(conlldata.documents[:half])
@@ -194,48 +205,48 @@ def parse_data(conll_file, ann_file, out_file):
 
     #print classifier
     #current_det = [artOrDet_current(w.sentence, w) for w in words]
-    current_det = [c.get_correct_determiner() for c in candidates]
-    results = [ classifier.classify(f[0]) for f in feature_set ]
-    correct_results = [ f[1] for f in feature_set ]
-    cm = nltk.ConfusionMatrix(correct_results, results)
-    print cm
-    print "overfit =", nltk.classify.accuracy(classifier, feature_set)
+    #current_det = [c.get_correct_determiner() for c in candidates]
+    #results = [ classifier.classify(f[0]) for f in feature_set ]
+    #correct_results = [ f[1] for f in feature_set ]
+    #cm = nltk.ConfusionMatrix(correct_results, results)
+    #print cm
+    #print "overfit =", nltk.classify.accuracy(classifier, feature_set)
 
-    new_mistakes = []
-    for c, r, w in itertools.izip(current_det, results, words):
-        if c == r:
-            continue
+    #new_mistakes = []
+    #for c, r, w in itertools.izip(current_det, results, words):
+    #    if c == r:
+    #        continue
 
-        #print w.nid, w.pid, w.sid, w.id, w, c, r
-        if r == "<X>":
-            m = Mistake(w.nid, w.pid, w.sid, w.id, w.id+1, "ArtOrDet", "")
-        else:
-            if c == "<X>":
-                m = Mistake(w.nid, w.pid, w.sid, w.id, w.id, "ArtOrDet", r)
-            else:
-                m = Mistake(w.nid, w.pid, w.sid, w.id, w.id+1, "ArtOrDet", r)
-        new_mistakes.append(m)
+    #    #print w.nid, w.pid, w.sid, w.id, w, c, r
+    #    if r == "<X>":
+    #        m = Mistake(w.nid, w.pid, w.sid, w.id, w.id+1, "ArtOrDet", "")
+    #    else:
+    #        if c == "<X>":
+    #            m = Mistake(w.nid, w.pid, w.sid, w.id, w.id, "ArtOrDet", r)
+    #        else:
+    #            m = Mistake(w.nid, w.pid, w.sid, w.id, w.id+1, "ArtOrDet", r)
+    #    new_mistakes.append(m)
 
-    #print len(new_mistakes)
-    new_mistakes_set = Set(new_mistakes)
+    ##print len(new_mistakes)
+    #new_mistakes_set = Set(new_mistakes)
 
-    #print len(new_mistakes_set)
+    ##print len(new_mistakes_set)
 
-    tp, fp, fn = 0, 0, 0
-    for m in conlldata.mistakes("ArtOrDet"):
-        if m in new_mistakes_set:
-            tp += 1
-        else:
-            fn += 1
+    #tp, fp, fn = 0, 0, 0
+    #for m in conlldata.mistakes("ArtOrDet"):
+    #    if m in new_mistakes_set:
+    #        tp += 1
+    #    else:
+    #        fn += 1
 
-    fp = len(new_mistakes_set) - tp
+    #fp = len(new_mistakes_set) - tp
 
-    print "tp =", tp
-    print "fp =", fp
-    print "fn =", fn
+    #print "tp =", tp
+    #print "fp =", fp
+    #print "fn =", fn
 
-    print "precision = %s" % (float(tp) / (tp + fp))
-    print "recall = %s" % (float(tp) / (tp + fn))
+    #print "precision = %s" % (float(tp) / (tp + fp))
+    #print "recall = %s" % (float(tp) / (tp + fn))
     #    if m.nid != 829 or m.pid != 4 or m.sid != 1:
     #        continue
 

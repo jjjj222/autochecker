@@ -1,6 +1,9 @@
 import sys
 import pdb
 
+EMPTY_STR = ''
+TARGET_DET = [EMPTY_STR, 'a', 'an', 'the']
+
 class Mistake:
     def __init__(self, nid, pid, sid, start_token, end_token, err_type, correction):
         self.nid = nid
@@ -122,6 +125,35 @@ class Sentence:
         for m in self._mistakes:
             if err_type == None or m.err_type == err_type:
                 yield m
+
+    def filter_mistakes(self):
+        new_mistakes = []
+        for m in self._mistakes:
+            if m.err_type != "ArtOrDet":
+                continue
+
+            orig = m.orig_text().lower()
+            correction = m.correction.lower()
+
+            if not correction in TARGET_DET:
+                continue
+
+            if not orig in TARGET_DET:
+                continue
+
+            if correction == "an" and orig == "a":
+                continue
+
+            if correction == "a" and orig == "an":
+                continue
+
+            if correction == "an":
+                m.correction = 'a'
+
+            new_mistakes.append(m)
+
+        self._mistakes = new_mistakes
+
 
     def _process_synt(self):
         tree_text = ""

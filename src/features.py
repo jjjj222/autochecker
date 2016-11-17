@@ -5,10 +5,12 @@ def artOrDet_features(word):
 
     i = word.id
 
+    result['current'] = ""
     if word.pos == "DT":
+        result['current'] = word.token.lower()
         i += 1
 
-    result['word'] = sentence[i].token.lower()
+    #result['word'] = sentence[i].token.lower()
     result['tag'] = sentence[i].pos
 
     if i+1 >= len(sentence):

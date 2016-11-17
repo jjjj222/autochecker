@@ -2,9 +2,6 @@ from myutil import *
 from document import *
 from parser import AnnParser
 
-EMPTY_STR = ''
-TARGET_DET = [EMPTY_STR, 'a', 'an', 'the']
-
 class Candidate:
     def __init__(self, word):
         self.word = word
@@ -19,6 +16,12 @@ class Candidate:
             return prev_word.token.lower()
 
         return EMPTY_STR
+
+    def get_determiner_class(self):
+        result = self.get_correct_determiner()
+        if result == "an":
+            result = "a"
+        return result
 
     def get_correct_determiner(self):
         m = self.word.sentence.get_mistake(self.word, "ArtOrDet")
@@ -35,6 +38,9 @@ class Candidate:
         if result == c:
             return None
 
+        if result == "a" and c == "an":
+            return None
+
         if result == EMPTY_STR:
             m = Mistake(self.word.nid, self.word.pid, self.word.sid, self.word.id,\
                 self.word.id+1, "ArtOrDet", "")
@@ -47,13 +53,19 @@ class Candidate:
                     self.word.id+1, "ArtOrDet", result)
 
         m.sentence = self.word.sentence
+        #m.dump()
+        #if m.pid == 3 and m.sid == 4:
+        #    pdb.set_trace()
         return m
 
     def is_target(self):
         return self.get_determiner() in TARGET_DET and self.get_correct_determiner() in TARGET_DET
 
     def dump(self):
-        print self.word, self.get_determiner(), self.get_correct_determiner()
+        self.word.dump()
+        #print self.word.sentence
+        #print self.word.sentence.tagged_text()
+        #print self.word, self.get_determiner(), self.get_correct_determiner()
 
 
 def get_candidates(documents):
@@ -121,6 +133,10 @@ class ConllData:
         for d in self.documents:
             for s in d.sentences():
                 yield s
+
+    def filter_mistakes(self):
+        for s in self.sentences():
+            s.filter_mistakes()
 
     def _add_mistakes_to_docs(self, documents, mistakes):
         self.id2doc = dict([ (d.id, d) for d in documents ])

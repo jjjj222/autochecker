@@ -64,7 +64,7 @@ class Candidate:
     def dump(self):
         self.word.dump()
         #print self.word.sentence
-        #print self.word.sentence.tagged_text()
+        print self.word.sentence.tagged_text()
         #print self.word, self.get_determiner(), self.get_correct_determiner()
 
 
@@ -189,7 +189,7 @@ def parse_conll_file(filename):
                 results.append(document)
             document = Document(NID)
 
-        word = Word(NID, PID, SID, TOKENID, TOKEN, POS, SYNT)
+        word = Word(NID, PID, SID, TOKENID, TOKEN, POS, DPHEAD, DPREL, SYNT)
         document.add_word(PID, SID, word)
 
     results.append(document)

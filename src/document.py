@@ -58,13 +58,15 @@ class Mistake:
             "<%s>" % self.err_type, "(%s)->[%s]" % (self.orig_text(), self.correction)
 
 class Word:
-    def __init__(self, nid, pid, sid, token_id, token, pos, synt):
+    def __init__(self, nid, pid, sid, token_id, token, pos, dphead, dprel, synt):
         self.nid = nid
         self.pid = pid
         self.sid = sid
         self.id = token_id
         self.token = token
         self.pos = pos
+        self.dphead = dphead
+        self.dprel = dprel
         self.synt = synt
 
         self.sentence = None

@@ -46,6 +46,9 @@ def match_parameter(parameter, requirement):
         if requirement[i] == "?":
             continue
 
+        if len(parameter) <= i:
+            return False
+
         if parameter[i] != requirement[i]:
             return False
 

@@ -32,7 +32,10 @@ def exec_shell_command(cmd):
     return out
 
 def get_log_file_name(case_name, parameter):
-    log_file = "../log/%s/%s.log" % (case_name, parameter.rstrip('0'))
+    par_str = parameter.rstrip('0')
+    if par_str == "":
+        par_str = "0"
+    log_file = "../log/%s/%s.log" % (case_name, par_str)
     return log_file
 
 def create_file_dir(file_name):
@@ -41,11 +44,30 @@ def create_file_dir(file_name):
         os.makedirs(dir_name)
 
 
-def print_info(name, data):
+def print_info(name, data, header=None):
+    if header != None:
+        sys.stdout.write(str(header))
+        sys.stdout.write('_')
     sys.stdout.write(str(name))
     sys.stdout.write(":")
-    for d in data:
+
+    if type(data) == list:
+        for d in data:
+            sys.stdout.write(" ")
+            sys.stdout.write(str(d))
+        print
+    else:
         sys.stdout.write(" ")
-        sys.stdout.write(str(d))
-    print
-    
+        print data
+
+def print_value(name, value):
+    print "%s = %s" % (name, value)
+
+
+def get_precision_recall_f1(tp, fp, fn):
+    precision = float(tp) / (tp + fp)
+    recall = float(tp) / (tp + fn)
+    f1 = 2 * float(tp) / (2 * tp + fn + fp)
+    return (precision, recall, f1)
+
+

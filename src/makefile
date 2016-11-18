@@ -19,7 +19,13 @@ ALL_CONLL = ../data/nucle3.2/preprocessed_data/nucle3.2-preprocessed.conll
 ALL_ANN = ../data/nucle3.2/preprocessed_data/nucle3.2-preprocessed.conll.ann
 ALL_OUT = ../result/all.out
 
-RUN_CASE = python $(EXEC) ../data/$@/$@.conll ../data/$@/$@.conll.ann ../result/$@.out 11
+RUN_CASE = python $(EXEC) ../data/$@/$@.conll ../data/$@/$@.conll.ann ../result/$@.out 0
+
+#tmp:
+#	python ResultGather.py simple
+
+#tmp2:
+#	python ParameterSearch.py simple
 
 simple:
 	$(RUN_CASE)
@@ -27,8 +33,13 @@ simple:
 simple2:
 	$(RUN_CASE)
 
-
 medium:
+	$(RUN_CASE)
+
+final:
+	$(RUN_CASE)
+
+all:
 	$(RUN_CASE)
 
 simple_m2:
@@ -39,11 +50,11 @@ simple2_m2:
 
 	@#python $(EXEC) ../data/$@/$@.conll ../data/$@/$@.conll.ann ../result/$@.out
 
-final:
-	python $(EXEC) $(FINAL_CONLL) $(FINAL_ANN) $(FINAL_OUT)
-
-all:
-	python $(EXEC) $(ALL_CONLL) $(ALL_ANN) $(ALL_OUT)
+#final:
+#	python $(EXEC) $(FINAL_CONLL) $(FINAL_ANN) $(FINAL_OUT)
+#
+#all:
+#	python $(EXEC) $(ALL_CONLL) $(ALL_ANN) $(ALL_OUT)
 
 final_m2:
 	$(M2SCORER) -v $(FINAL_OUT) $(FINAL_M2)

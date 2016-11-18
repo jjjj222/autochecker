@@ -217,7 +217,7 @@ def main():
         process_parameter(parameter)
 
     print_info("git_hash", git_hash)
-    print_info("date_time", get_date_time())
+    print_info("start_time", get_date_time())
     print_info("conll_file", conll_file)
     print_info("ann_file", ann_file)
     print_info("log_file", log_file)
@@ -228,6 +228,7 @@ def main():
         return
 
     run_data(conll_file, ann_file, out_file)
+    print_info("end_time", get_date_time())
     sys.stdout = sys.__stdout__
 
 if __name__ == "__main__":

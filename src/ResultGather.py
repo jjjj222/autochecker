@@ -22,7 +22,7 @@ def main():
             if line[0][-1] == ":":
                 data[line[0][:-1]] = " ".join(line[1:]).strip()
 
-        if not 'test_f1' in data:
+        if not 'end_time' in data:
             continue
 
         if not match_parameter(data['parameter'], parameter):

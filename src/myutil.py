@@ -74,4 +74,7 @@ def get_precision_recall_f1(tp, fp, fn):
 def get_time():
     return datetime.datetime.now().strftime('%H:%M:%S')
 
+def get_date_time():
+    return datetime.datetime.now().strftime('%Y/%m/%d-%H:%M:%S')
+
 

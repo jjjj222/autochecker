@@ -3,6 +3,7 @@ import os
 import sys
 import random
 import subprocess
+import signal
 
 import AutoCorrect
 import features
@@ -36,12 +37,26 @@ def rand_parameters(parameter_filter):
 
     return "".join(parameters)
 
+def signal_handler(signal, frame):
+    global log_file
+
+    print "DELETE %s" % log_file
+    cmd = "rm %s" % log_file
+    subprocess.call(cmd.split(' '))
+    sys.exit(0)
+
 
 def main():
+    global log_file
+
     case_name = sys.argv[1]
     parameter_filter = sys.argv[2] if len(sys.argv) > 2 else ""
     conll_file = "../data/%s/%s.conll" % (case_name, case_name)
     ann_file = "../data/%s/%s.conll.ann" % (case_name, case_name)
+
+    signal.signal(signal.SIGINT, signal_handler)
+    #print('Press Ctrl+C')
+    #signal.pause()
 
     exist_count = 0
     while True:

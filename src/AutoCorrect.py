@@ -217,6 +217,7 @@ def main():
         process_parameter(parameter)
 
     print_info("git_hash", git_hash)
+    print_info("date_time", get_date_time())
     print_info("conll_file", conll_file)
     print_info("ann_file", ann_file)
     print_info("log_file", log_file)

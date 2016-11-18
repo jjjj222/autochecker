@@ -19,9 +19,10 @@ def main():
             if line[0][-1] == ":":
                 data[line[0][:-1]] = " ".join(line[1:]).strip()
 
+        if not 'test_f1' in data:
+            continue
+
         all_data.append(data)
-        #print data
-        #break
 
     all_data = sorted(all_data, reverse=True, key=lambda x: float(x['test_f1']))
     #print all_data

@@ -21,8 +21,8 @@ ALL_OUT = ../result/all.out
 
 RUN_CASE = python $(EXEC) ../data/$@/$@.conll ../data/$@/$@.conll.ann ../result/$@.out 01
 
-#tmp:
-#	python ResultGather.py simple
+tmp:
+	python ResultGather.py simple
 
 #tmp2:
 #	python ParameterSearch.py simple

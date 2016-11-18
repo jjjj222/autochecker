@@ -65,9 +65,9 @@ def print_value(name, value):
 
 
 def get_precision_recall_f1(tp, fp, fn):
-    precision = float(tp) / (tp + fp)
-    recall = float(tp) / (tp + fn)
-    f1 = 2 * float(tp) / (2 * tp + fn + fp)
+    precision = float(tp) / (tp + fp) if tp + fp != 0 else 1
+    recall = float(tp) / (tp + fn) if tp + fn != 0 else 1
+    f1 = 2 * float(tp) / (2 * tp + fn + fp) if (2 * tp + fn + fp) != 0 else 1
     return (precision, recall, f1)
 
 

@@ -10,6 +10,7 @@ FEATURE_LIST = [
     'prev-tag',
     'first-word',
     'first-tag',
+    'current-det'
 ]
 
 def artOrDet_features(word, active_features):
@@ -20,7 +21,9 @@ def artOrDet_features(word, active_features):
     i = word.id
     head_pos = artOrDet_features_get_np_end_pos(word)
 
+    result['current-det'] = ""
     if word.pos == "DT":
+        result['current-det'] = word.token.lower()
         i += 1
 
     result['first-word'] = sentence[i].token.lower()

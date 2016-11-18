@@ -26,8 +26,13 @@ def main():
 
     all_data = sorted(all_data, reverse=True, key=lambda x: float(x['test_f1']))
     #print all_data
+    count = 0
     for d in all_data:
         print_data(d)
+        count += 1
+        if count == 40:
+            break
+    print "Total =", len(all_data)
 
 def print_data(d):
     sys.stdout.write("%.4f" % float(d['test_f1']))

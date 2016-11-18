@@ -1,5 +1,6 @@
 from myutil import *
 from document import *
+from features import *
 from parser import AnnParser
 
 class Candidate:
@@ -75,6 +76,10 @@ def get_candidates(documents):
 
     candidates = [Candidate(w) for w in words if Candidate(w).is_target()]
     return candidates
+
+def get_feature_set(candidates, active_features):
+    feature_set = [(artOrDet_features(c.word, active_features), c.get_determiner_class()) for c in candidates]
+    return feature_set
 
 def get_target_mistakes(documents):
     result = []

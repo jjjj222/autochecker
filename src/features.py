@@ -1,17 +1,26 @@
-def artOrDet_features(word):
+import pdb
+
+FEATURE_LIST = [
+    'head-word',
+    'head-tag',
+    'head-dprel',
+    'next-word',
+    'next-tag',
+    'prev-word',
+    'prev-tag',
+    'first-word',
+    'first-tag',
+]
+
+def artOrDet_features(word, active_features):
     sentence = word.sentence
 
     result = {}
 
     i = word.id
     head_pos = artOrDet_features_get_np_end_pos(word)
-    #print sentence.tagged_text()
-    #word.dump()
-    #print head_pos, sentence[head_pos]
 
-    #result['current'] = ""
     if word.pos == "DT":
-        #result['current'] = word.token.lower()
         i += 1
 
     result['first-word'] = sentence[i].token.lower()
@@ -29,12 +38,17 @@ def artOrDet_features(word):
         result['next-tag'] = sentence[head_pos+1].pos
 
     if word.id == 0:
-        result['pre-word'] = "<START>"
-        result['pre-tag'] = None
+        result['prev-word'] = "<START>"
+        result['prev-tag'] = None
     else:
-        result['pre-word'] = sentence[word.id-1].token.lower()
-        result['pre-tag'] = sentence[word.id-1].pos
+        result['prev-word'] = sentence[word.id-1].token.lower()
+        result['prev-tag'] = sentence[word.id-1].pos
 
+    for f in FEATURE_LIST:
+        if f not in active_features:
+            del result[f]
+
+    #pdb.set_trace()
     return result
 
 def artOrDet_features_get_np_end_pos(word):

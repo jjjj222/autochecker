@@ -4,6 +4,9 @@ import pdb
 EMPTY_STR = ''
 TARGET_DET = [EMPTY_STR, 'a', 'an', 'the']
 
+#-------------------------------------------------------------------------------
+#   Mistake
+#-------------------------------------------------------------------------------
 class Mistake:
     def __init__(self, nid, pid, sid, start_token, end_token, err_type, correction):
         self.nid = nid
@@ -57,6 +60,9 @@ class Mistake:
         print self.nid, self.pid, self.sid, "[%d:%d]" % (self.start_token, self.end_token),\
             "<%s>" % self.err_type, "(%s)->[%s]" % (self.orig_text(), self.correction)
 
+#-------------------------------------------------------------------------------
+#   Word
+#-------------------------------------------------------------------------------
 class Word:
     def __init__(self, nid, pid, sid, token_id, token, pos, dphead, dprel, synt):
         self.nid = nid
@@ -83,6 +89,10 @@ class Word:
     def dump(self):
         print self.nid, self.pid, self.sid, self.id, self.token
 
+
+#-------------------------------------------------------------------------------
+#   Sentence
+#-------------------------------------------------------------------------------
 class Sentence:
     def __init__(self, sid):
         self.id = sid
@@ -222,6 +232,9 @@ class Sentence:
         for m in self._mistakes:
             m.dump()
 
+#-------------------------------------------------------------------------------
+#   Paragraph
+#-------------------------------------------------------------------------------
 class Paragraph:
     def __init__(self, pid):
         self.id = pid
@@ -260,6 +273,9 @@ class Paragraph:
         print ""
 
 
+#-------------------------------------------------------------------------------
+#   Document
+#-------------------------------------------------------------------------------
 class Document:
     def __init__(self, nid):
         self.id = nid
@@ -300,7 +316,5 @@ class Document:
     def dump(self):
         for p in self.paragraphs:
             p.dump()
-        #for m in self.mistakes:
-        #    m.dump()
         print ""
 

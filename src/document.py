@@ -87,7 +87,7 @@ class Word:
         return "%s/%s/%s" % (self.token, self.pos, self.node)
 
     def dump(self):
-        print self.nid, self.pid, self.sid, self.id, self.token
+        print self.nid, self.pid, self.sid, self.id, self.token, self.dphead, self.dprel
 
 
 #-------------------------------------------------------------------------------

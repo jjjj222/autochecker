@@ -63,7 +63,7 @@ def print_data(d):
     sys.stdout.write('\t')
     sys.stdout.write("%-10s" % d['classifier'])
     sys.stdout.write('\t')
-    sys.stdout.write("%-10s" % d['parameter'])
+    sys.stdout.write("%-20s" % d['parameter'])
     sys.stdout.write('\t')
     sys.stdout.write("%.4f" % float(d['train_classifier_accuracy']))
     sys.stdout.write('\t')

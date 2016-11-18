@@ -182,21 +182,23 @@ def process_parameter(parameter):
     parameter_feature = parameter[2:]
 
     SEED = int(parameter_seed)
-    print_info("seed", SEED)
 
     CLASSIFIER_NAME = CLASSIFIER_LIST[int(parameter_cid)]
-    print_info("classifier", CLASSIFIER_NAME)
 
     active_features_list = []
     for i in range(len(parameter_feature)):
         if parameter_feature[i] == '1':
             active_features_list.append( FEATURE_LIST[i] )
 
-    print_info("active_features", active_features_list)
     ACTIVE_FEATURES = set(active_features_list)
 
 
 def main():
+    global CLASSIFIER_NAME
+    global FEATURE_LIST
+    global ACTIVE_FEATURES
+    global SEED
+
     git_hash = get_git_hash()
     conll_file = sys.argv[1]
     ann_file = sys.argv[2]
@@ -216,12 +218,15 @@ def main():
         sys.stdout = open(log_file, 'w')
         process_parameter(parameter)
 
-    print_info("git_hash", git_hash)
     print_info("start_time", get_date_time())
+    print_info("git_hash", git_hash)
     print_info("conll_file", conll_file)
     print_info("ann_file", ann_file)
     print_info("log_file", log_file)
     print_info("parameter", parameter)
+    print_info("seed", SEED)
+    print_info("classifier", CLASSIFIER_NAME)
+    print_info("active_features", sorted(list(ACTIVE_FEATURES)))
 
 
     if not check_file_to_read(conll_file):

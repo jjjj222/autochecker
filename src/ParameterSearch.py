@@ -18,7 +18,12 @@ import myutil
 def rand_parameters():
     parameters = []
 
+    # classifier
     parameters.append( str(random.randint(0, len(AutoCorrect.CLASSIFIER_LIST)-1)) )
+
+    # seed
+    parameters.append( str(random.randint(0, 9)) )
+
     for i in range(len(features.FEATURE_LIST)):
         parameters.append( str(random.randint(0, 1)) )
 
@@ -44,7 +49,7 @@ def main():
         cmd = "python AutoCorrect.py %s %s %s %s" %\
             (conll_file, ann_file, out_file, parameters)
 
-        print cmd
+        #print cmd
         subprocess.call(cmd.split(' '))
 
 

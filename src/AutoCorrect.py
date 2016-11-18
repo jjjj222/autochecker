@@ -21,6 +21,7 @@ CLASSIFIER_LIST = [
 
 CLASSIFIER_NAME = "maxent"
 ACTIVE_FEATURES = set(FEATURE_LIST)
+SEED = 0
 
 
 def write_out_correct(conlldata, out_file):
@@ -149,7 +150,7 @@ def run_data(conll_file, ann_file, out_file):
 
 
     documents = conlldata.documents
-    random.seed(1)
+    random.seed(SEED)
     random.shuffle(documents)
 
     split = len(documents) / 10
@@ -174,10 +175,14 @@ def process_parameter(parameter):
     global CLASSIFIER_NAME
     global FEATURE_LIST
     global ACTIVE_FEATURES
+    global SEED
 
     parameter_cid = parameter[0]
-    parameter_feature = parameter[1:]
+    parameter_seed = parameter[1]
+    parameter_feature = parameter[2:]
 
+    SEED = int(parameter_seed)
+    print_info("seed", SEED)
 
     CLASSIFIER_NAME = CLASSIFIER_LIST[int(parameter_cid)]
     print_info("classifier", CLASSIFIER_NAME)
@@ -207,8 +212,8 @@ def main():
 
     if parameter != None:
         log_file = get_log_file_name(case_name, parameter)
-        #create_file_dir(log_file)
-        #sys.stdout = open(log_file, 'w')
+        create_file_dir(log_file)
+        sys.stdout = open(log_file, 'w')
         process_parameter(parameter)
 
     print_info("git_hash", git_hash)

@@ -19,7 +19,7 @@ ALL_CONLL = ../data/nucle3.2/preprocessed_data/nucle3.2-preprocessed.conll
 ALL_ANN = ../data/nucle3.2/preprocessed_data/nucle3.2-preprocessed.conll.ann
 ALL_OUT = ../result/all.out
 
-RUN_CASE = python $(EXEC) ../data/$@/$@.conll ../data/$@/$@.conll.ann ../result/$@.out 0
+RUN_CASE = python $(EXEC) ../data/$@/$@.conll ../data/$@/$@.conll.ann ../result/$@.out 01
 
 #tmp:
 #	python ResultGather.py simple

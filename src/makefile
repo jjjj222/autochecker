@@ -24,8 +24,8 @@ RUN_CASE = python $(EXEC) ../data/$@/$@.conll ../data/$@/$@.conll.ann ../result/
 #tmp:
 #	python ResultGather.py simple
 
-#tmp2:
-#	python ParameterSearch.py simple
+tmp2:
+	python ParameterSearch.py simple 1?10?11???1
 
 simple:
 	$(RUN_CASE)

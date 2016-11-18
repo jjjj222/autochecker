@@ -1,5 +1,6 @@
 import os
 import sys
+import datetime
 import subprocess
 
 def error_msg(msg):
@@ -69,5 +70,8 @@ def get_precision_recall_f1(tp, fp, fn):
     recall = float(tp) / (tp + fn) if tp + fn != 0 else 1
     f1 = 2 * float(tp) / (2 * tp + fn + fp) if (2 * tp + fn + fp) != 0 else 1
     return (precision, recall, f1)
+
+def get_time():
+    return datetime.datetime.now().strftime('%H:%M:%S')
 
 

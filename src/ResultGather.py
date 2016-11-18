@@ -30,15 +30,19 @@ def main():
         print_data(d)
 
 def print_data(d):
-    sys.stdout.write("%-14s" % d['test_f1'])
+    sys.stdout.write("%.4f" % float(d['test_f1']))
+    sys.stdout.write(' ')
+    sys.stdout.write("%.4f" % float(d['test_precision']))
+    sys.stdout.write(' ')
+    sys.stdout.write("%.4f" % float(d['test_recall']))
     sys.stdout.write('\t')
     sys.stdout.write("%-10s" % d['classifier'])
     sys.stdout.write('\t')
     sys.stdout.write("%-10s" % d['parameter'])
     sys.stdout.write('\t')
-    sys.stdout.write("%-14s" % d['train_classifier_accuracy'])
+    sys.stdout.write("%.4f" % float(d['train_classifier_accuracy']))
     sys.stdout.write('\t')
-    sys.stdout.write("%-14s" % d['test_classifier_accuracy'])
+    sys.stdout.write("%.4f" % float(d['test_classifier_accuracy']))
     print
 
 

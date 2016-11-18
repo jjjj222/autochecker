@@ -5,6 +5,9 @@ import myutil
 
 def main():
     case_name = sys.argv[1]
+    parameter = sys.argv[2] if len(sys.argv) > 2 else ""
+
+
     log_dir = "../log/%s" % case_name
     print log_dir
     all_data = []
@@ -22,6 +25,9 @@ def main():
         if not 'test_f1' in data:
             continue
 
+        if not match_parameter(data['parameter'], parameter):
+            continue
+
         all_data.append(data)
 
     all_data = sorted(all_data, reverse=True, key=lambda x: float(x['test_f1']))
@@ -33,6 +39,17 @@ def main():
         if count == 40:
             break
     print "Total =", len(all_data)
+
+def match_parameter(parameter, requirement):
+    #print "QQ"
+    for i in range(len(requirement)):
+        if requirement[i] == "?":
+            continue
+
+        if parameter[i] != requirement[i]:
+            return False
+
+    return True
 
 def print_data(d):
     sys.stdout.write("%.4f" % float(d['test_f1']))

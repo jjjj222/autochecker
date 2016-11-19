@@ -5,8 +5,9 @@ import nltk
 import itertools
 import random
 import numpy
-import scipy
-import scipy.stats
+import math
+#import scipy
+#import scipy.stats
 from sets import Set
 
 from document import *
@@ -285,7 +286,10 @@ def get_avg_results(data_list):
 def get_info_from_results(results, name):
     lst = [r[name] for r in results]
     avg = numpy.mean(lst)
-    SE = scipy.stats.sem(lst)
+    #SE = scipy.stats.sem(lst)
+    var = sum([(e - avg)**2 for e in lst]) / (len(lst) - 1)
+    SE = math.sqrt(var / len(lst))
+
     return (avg ,SE)
 
 

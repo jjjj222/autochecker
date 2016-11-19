@@ -1,15 +1,15 @@
 import pdb
 
 FEATURE_LIST = [
-    'head-word',
-    'head-tag',
+    'head-word',        # V
+    'head-tag',         # V
     'head-dprel',
-    'next-word',
+    'next-word',        # V
     'next-tag',
     'prev-word',
     'prev-tag',
-    'first-word',
-    'first-tag',
+    'first-word',       # V
+    'first-tag',    # ?
     'current-det',
     'next-word-2',
     'next-tag-2',

@@ -55,19 +55,25 @@ def match_parameter(parameter, requirement):
     return True
 
 def print_data(d):
-    sys.stdout.write("%.4f" % float(d['test_f1']))
+    sys.stdout.write("%.2f" % float(d['test_f1']))
+    sys.stdout.write('  ')
+    sys.stdout.write("%.3f" % float(d['test_precision']))
     sys.stdout.write(' ')
-    sys.stdout.write("%.4f" % float(d['test_precision']))
+    sys.stdout.write("%.3f" % float(d['test_recall']))
+    sys.stdout.write('  ')
+    sys.stdout.write("%-14s" % d['classifier'])
     sys.stdout.write(' ')
-    sys.stdout.write("%.4f" % float(d['test_recall']))
-    sys.stdout.write('\t')
-    sys.stdout.write("%-10s" % d['classifier'])
-    sys.stdout.write('\t')
     sys.stdout.write("%-20s" % d['parameter'])
     sys.stdout.write('\t')
-    sys.stdout.write("%.4f" % float(d['train_classifier_accuracy']))
-    sys.stdout.write('\t')
-    sys.stdout.write("%.4f" % float(d['test_classifier_accuracy']))
+    sys.stdout.write("%.2f" % float(d['train_classifier_accuracy']))
+    sys.stdout.write('  ')
+    sys.stdout.write("%.2f" % float(d['test_classifier_accuracy']))
+    sys.stdout.write('  ')
+    sys.stdout.write("%6d" % float(d['test_tp']))
+    sys.stdout.write('  ')
+    sys.stdout.write("%6d" % float(d['test_fp']))
+    sys.stdout.write('  ')
+    sys.stdout.write("%6d" % float(d['test_fn']))
     print
 
 

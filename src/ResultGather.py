@@ -32,6 +32,8 @@ def main():
 
     all_data = sorted(all_data, reverse=True, key=lambda x: float(x['test_f1']))
     #print all_data
+    print_header()
+
     count = 0
     for d in all_data:
         print_data(d)
@@ -54,6 +56,29 @@ def match_parameter(parameter, requirement):
 
     return True
 
+def print_header():
+    sys.stdout.write( "%-4s" % "f1" )
+    sys.stdout.write('  ')
+    sys.stdout.write( "%-5s" % "p" )
+    sys.stdout.write(' ')
+    sys.stdout.write( "%-5s" % "r" )
+    sys.stdout.write('  ')
+    sys.stdout.write("%-14s" % 'classifier')
+    sys.stdout.write(' ')
+    sys.stdout.write("%-20s" % 'parameter')
+    sys.stdout.write(' ')
+    sys.stdout.write( "%-4s" % "l-a" )
+    sys.stdout.write('  ')
+    sys.stdout.write( "%-4s" % "t-a" )
+    sys.stdout.write('  ')
+    sys.stdout.write("%8s" % "tp")
+    sys.stdout.write('  ')
+    sys.stdout.write("%8s" % "fp")
+    sys.stdout.write('  ')
+    sys.stdout.write("%8s" % "fn")
+    sys.stdout.write('  ')
+    print
+
 def print_data(d):
     sys.stdout.write("%.2f" % float(d['test_f1']))
     sys.stdout.write('  ')
@@ -64,16 +89,16 @@ def print_data(d):
     sys.stdout.write("%-14s" % d['classifier'])
     sys.stdout.write(' ')
     sys.stdout.write("%-20s" % d['parameter'])
-    sys.stdout.write('\t')
+    sys.stdout.write(' ')
     sys.stdout.write("%.2f" % float(d['train_classifier_accuracy']))
     sys.stdout.write('  ')
     sys.stdout.write("%.2f" % float(d['test_classifier_accuracy']))
     sys.stdout.write('  ')
-    sys.stdout.write("%6d" % float(d['test_tp']))
+    sys.stdout.write("%8.1f" % float(d['test_tp']))
     sys.stdout.write('  ')
-    sys.stdout.write("%6d" % float(d['test_fp']))
+    sys.stdout.write("%8.1f" % float(d['test_fp']))
     sys.stdout.write('  ')
-    sys.stdout.write("%6d" % float(d['test_fn']))
+    sys.stdout.write("%8.1f" % float(d['test_fn']))
     print
 
 

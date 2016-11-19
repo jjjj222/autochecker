@@ -10,6 +10,9 @@ class Classifier(object):
     def labels(self):
         return self._labels
 
+    def show_most_informative_features(self, n=10):
+        pass
+
     def accuracy(self, test_set):
         total = 0
         for features, c in test_set:

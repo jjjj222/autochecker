@@ -78,3 +78,30 @@ def get_date_time():
     return datetime.datetime.now().strftime('%Y/%m/%d-%H:%M:%S')
 
 
+def split_n_fold(lst, n = 10):
+    return [ lst[i::n] for i in xrange(n) ]
+
+def generate_train_test_i(lst, i):
+    train = []
+
+    for j in range(len(lst)):
+        if j != i:
+            train += lst[j]
+
+    return (train, lst[i])
+
+def print_line(n=80):
+    print "-" * n
+
+def print_header(title, n=50):
+    n_space = ((n - len(title) - 2)/ 2) - 1
+
+    print_line(n)
+    print " " * n_space, title
+    print_line(n)
+
+def print_progress(msg):
+    tmp = sys.stdout
+    sys.stdout = sys.__stdout__
+    print get_time(), msg
+    sys.stdout = tmp

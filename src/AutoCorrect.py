@@ -58,25 +58,10 @@ def train_classifier(documents):
         classifier = nltk.MaxentClassifier.train(feature_set)
 
 
-    #header = "train"
-    #test_data(classifier, documents, header)
-
-    #classifier.show_most_informative_features()
-
-    #print
-
     return classifier
 
-#def test_classifier(classifier, feature_set):
-#    results = [ classifier.classify(f[0]) for f in feature_set ]
-#    correct_results = [ f[1] for f in feature_set ]
-#    cm = nltk.ConfusionMatrix(correct_results, results)
-#    print cm
-#    print "accuracy =", nltk.classify.accuracy(classifier, feature_set)
-#    print
-#
 
-def test_data(classifier, documents, header=None):
+def test_data(classifier, documents, header, show_detail=False):
     result = {}
     candidates = get_candidates(documents)
     feature_set = get_feature_set(candidates, ACTIVE_FEATURES)
@@ -128,6 +113,13 @@ def test_data(classifier, documents, header=None):
     result['recall'] = recall
     result['f1'] = f1
 
+    if show_detail:
+        print_header("False Positive")
+        dump_mistakes(fp_list)
+        print_header("False Negative")
+        dump_mistakes(fn_list)
+        print_line()
+
     print_results_format(result, header)
 
     return result
@@ -159,7 +151,9 @@ def print_result_se(result, name, header):
 
 def dump_mistakes(mistakes):
     for m in mistakes:
+        print m.sentence
         m.dump()
+        print
     print
 
 
@@ -190,7 +184,7 @@ def run_data(conll_file, ann_file, out_file):
         classifier.show_most_informative_features()
     print
 
-    test_data(classifier, test_documents, "test")
+    test_data(classifier, test_documents, "test", True)
     #print_info("test_precision", [precision])
     #print_info("test_recall", [recall])
     #print_info("test_f1", [f1])

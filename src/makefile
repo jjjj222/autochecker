@@ -19,7 +19,7 @@ ALL_CONLL = ../data/nucle3.2/preprocessed_data/nucle3.2-preprocessed.conll
 ALL_ANN = ../data/nucle3.2/preprocessed_data/nucle3.2-preprocessed.conll.ann
 ALL_OUT = ../result/all.out
 
-RUN_CASE = python $(EXEC) ../data/$@/$@.conll ../data/$@/$@.conll.ann ../result/$@.out 00111111111111111
+RUN_CASE = python $(EXEC) ../data/$@/$@.conll ../data/$@/$@.conll.ann ../result/$@.out 30111111111111111
 #RUN_CASE = python -m pdb $(EXEC) ../data/$@/$@.conll ../data/$@/$@.conll.ann ../result/$@.out
 
 #tmp:

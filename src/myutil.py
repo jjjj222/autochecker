@@ -90,7 +90,7 @@ def generate_train_test_i(lst, i):
 
     return (train, lst[i])
 
-def print_line(n=80):
+def print_line(n=50):
     print "-" * n
 
 def print_header(title, n=50):

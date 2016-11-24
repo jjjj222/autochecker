@@ -19,10 +19,11 @@ ALL_CONLL = ../data/nucle3.2/preprocessed_data/nucle3.2-preprocessed.conll
 ALL_ANN = ../data/nucle3.2/preprocessed_data/nucle3.2-preprocessed.conll.ann
 ALL_OUT = ../result/all.out
 
-RUN_CASE = python $(EXEC) ../data/$@/$@.conll ../data/$@/$@.conll.ann ../result/$@.out 30111111111111111
+RUN_CASE = python $(EXEC) ../data/$@/$@.conll ../data/$@/$@.conll.ann ../result/$@.out 00111111111111111
 #RUN_CASE = python -m pdb $(EXEC) ../data/$@/$@.conll ../data/$@/$@.conll.ann ../result/$@.out
 
-#tmp:
+#final:
+#	python Info.py ../data/$@/$@.conll ../data/$@/$@.conll.ann
 #	python ResultGather.py simple
 
 #tmp2:
@@ -37,11 +38,11 @@ RUN_CASE = python $(EXEC) ../data/$@/$@.conll ../data/$@/$@.conll.ann ../result/
 medium:
 	$(RUN_CASE)
 
-final:
-	$(RUN_CASE)
+#final:
+#	$(RUN_CASE)
 
-all:
-	$(RUN_CASE)
+#all:
+#	$(RUN_CASE)
 
 simple_m2:
 	$(M2SCORER) -v $(SIMPLE_OUT) $(SIMPLE_M2)

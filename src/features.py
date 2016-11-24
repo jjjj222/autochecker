@@ -16,6 +16,10 @@ FEATURE_LIST = [
     'prev-word-2',
     'prev-tag-2',
     'head-parent',
+    'prev-verb',
+    'next-verb',
+    #'prev-sent',
+    #'next-sent',
 ]
 
 def artOrDet_features(word, active_features):
@@ -23,16 +27,16 @@ def artOrDet_features(word, active_features):
 
     result = {}
 
-    i = word.id
+    next_pos = word.id
     head_pos = artOrDet_features_get_np_end_pos(word)
 
     result['current-det'] = ""
     if word.pos == "DT":
         result['current-det'] = word.token.lower()
-        i += 1
+        next_pos += 1
 
-    result['first-word'] = sentence[i].token.lower()
-    result['first-tag'] = sentence[i].pos
+    result['first-word'] = sentence[next_pos].token.lower()
+    result['first-tag'] = sentence[next_pos].pos
 
     result['head-word'] = sentence[head_pos].token.lower()
     result['head-tag'] = sentence[head_pos].pos
@@ -42,7 +46,7 @@ def artOrDet_features(word, active_features):
     if parent_pos_str.isdigit():
         result['head-parent'] = sentence[int(parent_pos_str)].token.lower()
     else:
-        result['head-parent'] = None
+        result['head-parent'] = "<NULL>"
 
     if head_pos+1 >= len(sentence):
         result['next-word'] = "<END>"
@@ -71,6 +75,27 @@ def artOrDet_features(word, active_features):
     else:
         result['prev-word-2'] = sentence[word.id-2].token.lower()
         result['prev-tag-2'] = sentence[word.id-2].pos
+
+    result['prev-verb'] = "<NULL>"
+    i = word.id - 1
+    while i >= 0:
+        tmp_w = sentence[i]
+        if tmp_w.pos[0] == "V":
+            result['prev-verb'] = tmp_w.token.lower()
+            break
+        i -= 1
+
+    result['next-verb'] = "<NULL>"
+    i = word.id
+    while i < len(sentence):
+        tmp_w = sentence[i]
+        if tmp_w.pos[0] == "V":
+            result['next-verb'] = tmp_w.token.lower()
+            break
+        i += 1
+
+    #result['prev-sent'] = False
+    #result['next-sent'] = False
 
     for f in FEATURE_LIST:
         if f not in active_features:

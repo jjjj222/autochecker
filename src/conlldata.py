@@ -65,7 +65,7 @@ class Candidate:
     def dump(self):
         self.word.dump()
         #print self.word.sentence
-        print self.word.sentence.tagged_text()
+        #print self.word.sentence.tagged_text()
         #print self.word, self.get_determiner(), self.get_correct_determiner()
 
 

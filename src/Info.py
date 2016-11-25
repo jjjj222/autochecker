@@ -22,12 +22,15 @@ def run_data(conll_file, ann_file):
 
     mistakes = get_target_mistakes(conlldata.documents)
 
-    for m in mistakes:
-        print m.sentence
-        m.dump()
-        print
+    #for m in mistakes:
+    #    print m.sentence
+    #    m.dump()
+    #    print
 
-    print_info("count", len(mistakes))
+    print_info("mistake_count", len(mistakes))
+
+    candidates = get_candidates(conlldata.documents)
+    print_info("candidates_count", len(candidates))
 
 
     #documents = conlldata.documents

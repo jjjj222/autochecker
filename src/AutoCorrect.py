@@ -39,7 +39,16 @@ def write_out_correct(conlldata, out_file):
 
 def train_classifier(documents):
     candidates = get_candidates(documents)
+
+    additional_candidates = []
+    for c in candidates:
+        if c.get_determiner() != c.get_correct_determiner():
+            additional_candidates += [c] * 10
+
+    candidates += additional_candidates
+    
     feature_set = get_feature_set(candidates, ACTIVE_FEATURES)
+    random.shuffle(feature_set)
 
     #majority
     classifier = MajorityClassifier()
@@ -157,7 +166,7 @@ def dump_mistakes(mistakes):
     print
 
 
-def run_data(conll_file, ann_file, out_file):
+def run_data(conll_file, ann_file):
     conlldata = ConllData(conll_file, ann_file)
     conlldata.filter_mistakes()
 
@@ -189,7 +198,7 @@ def run_data(conll_file, ann_file, out_file):
     #print_info("test_recall", [recall])
     #print_info("test_f1", [f1])
 
-def run_data_10_fold(conll_file, ann_file, out_file):
+def run_data_10_fold(conll_file, ann_file):
     conlldata = ConllData(conll_file, ann_file)
     conlldata.filter_mistakes()
 
@@ -299,7 +308,7 @@ def process_parameter(parameter):
 
     SEED = int(parameter_seed)
 
-    CLASSIFIER_NAME = CLASSIFIER_LIST[int(parameter_cid)]
+    CLASSIFIER_NAME = CLASSIFIER_LIST[int(parameter_cid) % len(CLASSIFIER_LIST)]
 
     active_features_list = []
     for i in range(len(parameter_feature)):
@@ -318,18 +327,17 @@ def main():
     git_hash = get_git_hash()
     conll_file = sys.argv[1]
     ann_file = sys.argv[2]
-    out_file = sys.argv[3]
-    log_file = ""
+    log_file = sys.argv[3]
     parameter = None
 
-    case_name = os.path.basename(conll_file)
-    case_name = os.path.splitext(case_name)[0]
+    #case_name = os.path.basename(conll_file)
+    #case_name = os.path.splitext(case_name)[0]
 
     if (len(sys.argv) > 4):
         parameter = sys.argv[4]
 
     if parameter != None:
-        log_file = get_log_file_name(case_name, parameter)
+        #log_file = get_log_file_name(case_name, parameter)
         create_file_dir(log_file)
         sys.stdout = open(log_file, 'w')
         process_parameter(parameter)
@@ -350,8 +358,8 @@ def main():
     if not check_file_to_read(conll_file):
         return
 
-    #run_data(conll_file, ann_file, out_file)
-    run_data_10_fold(conll_file, ann_file, out_file)
+    #run_data(conll_file, ann_file)
+    run_data_10_fold(conll_file, ann_file)
 
     print_info("end_time", get_date_time())
     sys.stdout = sys.__stdout__

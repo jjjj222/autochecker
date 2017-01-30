@@ -24,7 +24,8 @@ CLASSIFIER_LIST = [
 ]
 
 #CLASSIFIER_NAME = "majority"
-CLASSIFIER_NAME = "naive"
+#CLASSIFIER_NAME = "naive"
+CLASSIFIER_NAME = "maxent"
 ACTIVE_FEATURES = set(FEATURE_LIST)
 SEED = 0
 
@@ -338,9 +339,10 @@ def main():
 
     if parameter != None:
         #log_file = get_log_file_name(case_name, parameter)
-        create_file_dir(log_file)
-        sys.stdout = open(log_file, 'w')
         process_parameter(parameter)
+
+    create_file_dir(log_file)
+    sys.stdout = open(log_file, 'w')
 
     print_header("Setting")
     print_info("start_time", get_date_time())

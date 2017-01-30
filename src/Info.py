@@ -18,19 +18,25 @@ from features import *
 
 def run_data(conll_file, ann_file):
     conlldata = ConllData(conll_file, ann_file)
-    conlldata.filter_mistakes()
 
-    mistakes = get_target_mistakes(conlldata.documents)
+    for s in conlldata.sentences():
+        if s[0].token == "They" and s[1].token == "play":
+            for w in s:
+                w.dump()
+            #s.dump()
+    #conlldata.filter_mistakes()
 
-    #for m in mistakes:
-    #    print m.sentence
-    #    m.dump()
-    #    print
+    #mistakes = get_target_mistakes(conlldata.documents)
 
-    print_info("mistake_count", len(mistakes))
+    ##for m in mistakes:
+    ##    print m.sentence
+    ##    m.dump()
+    ##    print
 
-    candidates = get_candidates(conlldata.documents)
-    print_info("candidates_count", len(candidates))
+    #print_info("mistake_count", len(mistakes))
+
+    #candidates = get_candidates(conlldata.documents)
+    #print_info("candidates_count", len(candidates))
 
 
     #documents = conlldata.documents
